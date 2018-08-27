@@ -21,8 +21,8 @@ public class TabControlFragment extends BaseFragment {
     @BindView(R.id.rl_ctrl_right)        RelativeLayout btnRight;
     @BindView(R.id.open_device)          TextView btnDevOpen;
     @BindView(R.id.close_device)         TextView btnDevClose;
-    @BindView(R.id.brake_start)          TextView btnBrekeStart;
-    @BindView(R.id.brake_release)        TextView btnBrekeRelease;
+    @BindView(R.id.brake_start)          TextView btnBrakeStart;
+    @BindView(R.id.brake_release)        TextView btnBrakeRelease;
 
     public static TabControlFragment newInstance() {
         return new TabControlFragment();
