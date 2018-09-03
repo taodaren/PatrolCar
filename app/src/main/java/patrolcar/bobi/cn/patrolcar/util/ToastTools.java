@@ -1,4 +1,4 @@
-package patrolcar.bobi.cn.patrolcar;
+package patrolcar.bobi.cn.patrolcar.util;
 
 import android.content.Context;
 import android.view.Gravity;

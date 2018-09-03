@@ -6,12 +6,18 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
-import com.clj.fastble.BleManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends BLECtrlMgr implements BottomNavigationBar.OnTabSelectedListener {
+import patrolcar.bobi.cn.blelib.BleManager;
+import patrolcar.bobi.cn.patrolcar.app.BleControl;
+import patrolcar.bobi.cn.patrolcar.view.base.BaseActivity;
+import patrolcar.bobi.cn.patrolcar.view.fragment.TabControlFragment;
+import patrolcar.bobi.cn.patrolcar.view.fragment.TabDeviceFragment;
+import patrolcar.bobi.cn.patrolcar.view.fragment.TabMineFragment;
+
+public class MainActivity extends BleControl implements BottomNavigationBar.OnTabSelectedListener {
     private List<Fragment> mFragments;
     private Fragment mCurrentFragment;
 
@@ -49,7 +55,7 @@ public class MainActivity extends BLECtrlMgr implements BottomNavigationBar.OnTa
                 .addItem(new BottomNavigationItem(R.drawable.tab_mine, R.string.text_tab_mine)
                         .setActiveColorResource(R.color.colorWhite))
                 // 默认显示面板
-                .setFirstSelectedPosition(1)
+                .setFirstSelectedPosition(0)
                 // 初始化
                 .initialise();
 
@@ -68,7 +74,7 @@ public class MainActivity extends BLECtrlMgr implements BottomNavigationBar.OnTa
 
     /** 设置默认 fragment */
     private void setDefFragment() {
-        Fragment defFragment = mFragments.get(1);
+        Fragment defFragment = mFragments.get(0);
         if (!defFragment.isAdded()) {
             addFragment(R.id.main_content, defFragment);
             mCurrentFragment = defFragment;
@@ -113,13 +119,5 @@ public class MainActivity extends BLECtrlMgr implements BottomNavigationBar.OnTa
     /** Tab 被重新选中 */
     @Override
     public void onTabReselected(int position) {
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // 断开蓝牙
-        BleManager.getInstance().disconnectAllDevice();
-        BleManager.getInstance().destroy();
     }
 }

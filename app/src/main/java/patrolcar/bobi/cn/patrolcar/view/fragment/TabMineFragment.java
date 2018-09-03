@@ -1,6 +1,9 @@
-package patrolcar.bobi.cn.patrolcar;
+package patrolcar.bobi.cn.patrolcar.view.fragment;
 
 import android.view.View;
+
+import patrolcar.bobi.cn.patrolcar.view.base.BaseFragment;
+import patrolcar.bobi.cn.patrolcar.R;
 
 /**
  * 我的模块
