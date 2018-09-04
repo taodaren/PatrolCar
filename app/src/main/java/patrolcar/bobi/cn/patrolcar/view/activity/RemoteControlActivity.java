@@ -9,7 +9,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import patrolcar.bobi.cn.blelib.data.BleDevice;
 import patrolcar.bobi.cn.patrolcar.R;
-import patrolcar.bobi.cn.patrolcar.util.ToastTools;
+import patrolcar.bobi.cn.blelib.utils.ToastTools;
 import patrolcar.bobi.cn.patrolcar.comm.Observer;
 import patrolcar.bobi.cn.patrolcar.comm.ObserverManager;
 import patrolcar.bobi.cn.patrolcar.view.base.BaseActivity;

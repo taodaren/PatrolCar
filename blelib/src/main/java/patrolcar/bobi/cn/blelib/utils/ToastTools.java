@@ -1,4 +1,4 @@
-package patrolcar.bobi.cn.patrolcar.util;
+package patrolcar.bobi.cn.blelib.utils;
 
 import android.content.Context;
 import android.view.Gravity;

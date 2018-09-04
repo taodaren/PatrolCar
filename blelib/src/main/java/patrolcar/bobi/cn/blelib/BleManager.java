@@ -219,7 +219,7 @@ public class BleManager {
     }
 
     /**
-     * Get operate connect Over Time
+     * 获取连接超时时间
      */
     public long getConnectOverTime() {
         return connectOverTime;
@@ -272,7 +272,7 @@ public class BleManager {
     }
 
     /**
-     * 扫描设备然后连接
+     * 扫描设备然后连接：扫描到首个符合扫描规则的设备后，便停止扫描，然后连接该设备。
      */
     public void scanAndConnect(BleScanAndConnectCallback callback) {
         if (callback == null) {
@@ -337,6 +337,7 @@ public class BleManager {
      * 停止扫描
      */
     public void stopScan() {
+        // 调用该方法后，如果当前还处在扫描状态，会立即结束，并回调`onScanFinished`方法。
         BleScanner.getInstance().stopLeScan();
     }
 
@@ -697,6 +698,7 @@ public class BleManager {
         }
     }
 
+    /** 设备是否连接 */
     public boolean isConnected(BleDevice bleDevice) {
         return getConnectState(bleDevice) == BluetoothProfile.STATE_CONNECTED;
     }

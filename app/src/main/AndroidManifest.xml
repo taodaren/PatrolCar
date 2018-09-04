@@ -21,8 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".operation.OperationActivity" />
-        <activity android:name=".view.activity.RemoteControlActivity"></activity>
+        <activity android:name=".view.activity.RemoteControlActivity" />
     </application>
 
 </manifest>
