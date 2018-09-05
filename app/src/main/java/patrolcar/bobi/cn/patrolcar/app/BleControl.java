@@ -22,6 +22,8 @@ import com.yanzhenjie.permission.Rationale;
 import com.yanzhenjie.permission.RequestExecutor;
 import com.yanzhenjie.permission.SettingService;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -35,8 +37,9 @@ import patrolcar.bobi.cn.blelib.callback.BleScanCallback;
 import patrolcar.bobi.cn.blelib.data.BleDevice;
 import patrolcar.bobi.cn.blelib.exception.BleException;
 import patrolcar.bobi.cn.blelib.scan.BleScanRuleConfig;
-import patrolcar.bobi.cn.patrolcar.R;
 import patrolcar.bobi.cn.blelib.utils.ToastTools;
+import patrolcar.bobi.cn.patrolcar.R;
+import patrolcar.bobi.cn.patrolcar.model.BleDeviceEvent;
 import patrolcar.bobi.cn.patrolcar.view.base.BaseActivity;
 
 import static patrolcar.bobi.cn.patrolcar.app.AppConstant.BLE_DEVICE_NAME;
@@ -67,6 +70,24 @@ public class BleControl extends BaseActivity {
                 .setScanTimeOut(10000)                             // 扫描超时时间，可选，默认10秒
                 .build();
         BleManager.getInstance().initScanRule(scanRuleConfig);
+    }
+
+    /** BLE 初始化及全局配置 */
+    public void initConfigBLE() {
+        // 初始化
+        BleManager.getInstance().init(getApplication());
+        // 全局配置
+        BleManager.getInstance()
+                // 配置日志 → 默认打开库中的运行日志
+                .enableLog(true)
+                // 配置重连 → 设置连接时重连次数和重连间隔（毫秒），默认为 0 次不重连
+                .setReConnectCount(1, 5000)
+                // 配置分包发送 → 设置分包发送的时候，每一包的数据长度，默认 20 个字节
+                .setSplitWriteNum(20)
+                // 配置连接超时 → 设置连接超时时间（毫秒），默认 10 秒
+                .setConnectOverTime(20000)
+                // 配置操作超时 → 设置 readRssi、setMtu、write、read、notify、indicate 的超时时间（毫秒），默认 5 秒
+                .setOperateTimeout(5000);
     }
 
     /** 启动蓝牙：判断 BLE 是否支持、打开 */
@@ -172,39 +193,40 @@ public class BleControl extends BaseActivity {
                         public void onAction(List<String> permissions) {
                             // 开始扫描
                             setScanRule();
-                            scanBleDev();
+                            startScan();
                         }
                     })
                     .start();
         }
     }
 
-    /** 扫描设备 */
-    private void scanBleDev() {
+    /** 开始扫描 */
+    private void startScan() {
+        // 扫描及过滤过程是在工作线程中进行，所以不会影响主线程的UI操作，最终每一个回调结果都会回到主线程
         BleManager.getInstance().scan(new BleScanCallback() {
 
             /** @param scanResultList 本次扫描时段内所有被扫描且过滤后的设备集合 */
             @Override
             public void onScanFinished(List<BleDevice> scanResultList) {
-                // 开始扫描：它会回到主线程，相当于 onScanning 设备之和
-                Log.i(TAG, "开始扫描..." + "设备数：" + +scanResultList.size());
+                // 扫描结束，它会回到主线程，相当于 onScanning 设备之和
+                Log.i(TAG, "扫描完成..." + "设备数：" + +scanResultList.size());
 
                 for (int i = 0; i < scanResultList.size(); i++) {
-                    Log.i(TAG, "扫描完成设备: " + scanResultList.get(i));
+                    Log.i(TAG, "扫描完成设备: " + scanResultList.get(i).getMac());
                 }
             }
 
-            /** @param success 本次扫描动作是否开启成功；由于蓝牙没有打开，上一次扫描没有结束等原因，会造成扫描开启失败 */
+            /** @param success 本次扫描动作是否开启成功 */
             @Override
             public void onScanStarted(boolean success) {
-                // 扫描到一个符合扫描规则的 BLE 设备（主线程）
+                // 会回到主线程，由于蓝牙没有打开，上一次扫描没有结束等原因，会造成扫描开启失败
                 Log.i(TAG, "扫描是否开启成功: " + success);
             }
 
             /** @param bleDevice 经过扫描过滤规则过滤后的设备，同一个设备只会出现一次 */
             @Override
             public void onScanning(BleDevice bleDevice) {
-                // 扫描结束，列出所有扫描到的符合扫描规则的 BLE 设备（主线程）
+                // 扫描到一个符合扫描规则的 BLE 设备（主线程）
                 String bleDevName = bleDevice.getName();
                 String mac = bleDevice.getMac();
                 byte[] scanRecord = bleDevice.getScanRecord();
@@ -215,6 +237,8 @@ public class BleControl extends BaseActivity {
                         + " 广播数据: " + scanRecord.length
                         + " 信号强度: " + rssi
                 );
+
+                connByBleDevice(bleDevice);
             }
 
             /** @param bleDevice 同一个设备会在不同的时间，携带自身不同的状态（比如信号强度等），出现在这个回调方法中，出现次数取决于周围的设备量及外围设备的广播间隔 */
@@ -251,8 +275,10 @@ public class BleControl extends BaseActivity {
             public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
                 Log.i(TAG, "DEV_MAC: " + bleDevice.getMac() + " 连接成功！");
 
-                // 通过 BluetoothGatt，查找出所有的 Service 和 Characteristic 的 UUID
-                selectUuids(bleDevice, gatt);
+                EventBus.getDefault().post(new BleDeviceEvent(bleDevice,"连接成功"));
+
+//                // 通过 BluetoothGatt，查找出所有的 Service 和 Characteristic 的 UUID
+//                selectUuids(bleDevice, gatt);
             }
 
             /** 连接断开，特指连接后再断开的情况 */
@@ -263,6 +289,8 @@ public class BleControl extends BaseActivity {
                    此外，如果通过调用 disconnect(BleDevice bleDevice) 方法，
                    主动断开蓝牙连接的结果也会在这个方法中回调，此时 isActiveDisConnected 将会是 true */
                 Log.i(TAG, "DEV_MAC: " + bleDevice.getMac() + " 连接后再断开: " + isActiveDisConnected);
+
+                EventBus.getDefault().post(new BleDeviceEvent(bleDevice,"连接断开"));
             }
         });
     }
@@ -280,7 +308,35 @@ public class BleControl extends BaseActivity {
                 Log.i(TAG, "DEV_MAC: " + bleDevice.getMac() + " UUID_特征: " + uuid_chara);
             }
         }
+
+//        receiveNotify(bleDevice);
     }
+
+//    public void receiveNotify(BleDevice bleDevice) {
+//        BleManager.getInstance().notify(bleDevice,
+//                UUID_GATT_SERVICE.toString(),
+//                UUID_GATT_CHARACTERISTIC_WRITE.toString(),
+//                new BleNotifyCallback() {
+//            @Override
+//            public void onNotifySuccess() {
+//                // 打开通知操作成功
+//                Log.i(TAG, "onNotifySuccess: ");
+//            }
+//
+//            @Override
+//            public void onNotifyFailure(BleException exception) {
+//                // 打开通知操作失败
+//                Log.i(TAG, "onNotifyFailure: ");
+//            }
+//
+//            @Override
+//            public void onCharacteristicChanged(byte[] data) {
+//                // 打开通知后，设备发过来的数据将在这里出现
+//                Log.i(TAG, "data: " + data.toString());
+//                Log.i(TAG, "length: " + data.length);
+//            }
+//        });
+//    }
 
     /**
      * BLE 通过 Mac 连接
