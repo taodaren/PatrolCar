@@ -12,7 +12,7 @@ import butterknife.OnClick;
  * 遥控模块
  */
 
-public class TabControlFragment extends BaseFragment {
+public class TabCtrlFragment extends BaseFragment {
 
     @BindView(R.id.btn_ctrl_stop)        Button btnStop;
     @BindView(R.id.rl_ctrl_up)           RelativeLayout btnUp;
@@ -24,18 +24,18 @@ public class TabControlFragment extends BaseFragment {
     @BindView(R.id.brake_start)          TextView btnBrakeStart;
     @BindView(R.id.brake_release)        TextView btnBrakeRelease;
 
-    public static TabControlFragment newInstance() {
-        return new TabControlFragment();
+    public static TabCtrlFragment newInstance() {
+        return new TabCtrlFragment();
     }
 
     @Override
     protected int getFragmentLayout() {
-        return R.layout.fragment_tab_control;
+        return R.layout.fragment_tab_ctrl;
     }
 
     @Override
     public void initToolbar() {
-        setToolbar(R.id.main_toolbar, R.string.text_tab_control, View.VISIBLE);
+        setToolbar(R.id.main_toolbar, R.string.txt_tab_control, View.VISIBLE);
     }
 
     @Override

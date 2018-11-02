@@ -1,24 +1,15 @@
 <resources>
     <string name="app_name">蒙蛋</string>
 
-    <string name="text_tab_device">设备</string>
-    <string name="text_tab_control">遥控</string>
-    <string name="mall_name">商城</string>
-    <string name="text_tab_mine">我的</string>
+    <string name="txt_tab_device">状态</string>
+    <string name="txt_tab_control">遥控</string>
+    <string name="txt_tab_mine">距离</string>
 
-    <string name="message_permission_rationale">自 Android 6.0 开始需要打开位置权限才可以搜索到蓝牙设备:\n\n%1$s</string>
-    <string name="message_permission_always_failed">程序需要下列权限, 请在设置中打开:\n\n%1$s</string>
-
-    <string name="dialog_open">打开</string>
-    <string name="dialog_cancel">取消</string>
-    <string name="dialog_tips">提示</string>
-    <string name="dialog_set">设置</string>
-    <string name="dialog_open_no">不打开</string>
-    <string name="open_device">开机</string>
-    <string name="close_device">关机</string>
-    <string name="open_motor">开电机</string>
-    <string name="close_motor">关电机</string>
-    <string name="brake_start">刹车</string>
-    <string name="brake_release">松刹</string>
-    <string name="stop_device">STOP</string>
+    <string name="txt_dev_open">开机</string>
+    <string name="txt_dev_close">关机</string>
+    <string name="txt_open_motor">开电机</string>
+    <string name="txt_close_motor">关电机</string>
+    <string name="txt_brake_start">刹车</string>
+    <string name="txt_brake_release">松刹</string>
+    <string name="txt_stop_device">STOP</string>
 </resources>

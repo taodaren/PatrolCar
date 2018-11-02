@@ -4,14 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".TabDeviceFragment">
+    tools:context=".TabDistanceFragment">
 
     <include layout="@layout/layout_toolbar" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:text="@string/text_tab_device" />
+        android:gravity="center"
+        android:text="@string/txt_tab_mine"
+        android:textSize="18sp" />
 
 </LinearLayout>

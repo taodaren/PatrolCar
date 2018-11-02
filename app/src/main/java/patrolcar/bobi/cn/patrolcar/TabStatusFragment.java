@@ -3,23 +3,23 @@ package patrolcar.bobi.cn.patrolcar;
 import android.view.View;
 
 /**
- * 我的模块
+ * 状态模块
  */
 
-public class TabMineFragment extends BaseFragment {
+public class TabStatusFragment extends BaseFragment {
 
-    public static TabMineFragment newInstance() {
-        return new TabMineFragment();
+    public static TabStatusFragment newInstance() {
+        return new TabStatusFragment();
     }
 
     @Override
     protected int getFragmentLayout() {
-        return R.layout.fragment_tab_mine;
+        return R.layout.fragment_tab_status;
     }
 
     @Override
     public void initToolbar() {
-        setToolbar(R.id.main_toolbar, R.string.text_tab_mine, View.VISIBLE);
+        setToolbar(R.id.main_toolbar, R.string.txt_tab_device, View.VISIBLE);
     }
 
     @Override

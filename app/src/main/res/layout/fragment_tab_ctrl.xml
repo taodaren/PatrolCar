@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
     android:orientation="vertical"
-    tools:context=".TabControlFragment">
+    tools:context=".TabCtrlFragment">
 
     <include layout="@layout/layout_toolbar" />
 
@@ -27,7 +27,7 @@
             android:layout_height="100dp"
             android:layout_centerInParent="true"
             android:background="@drawable/shape_bg_btn"
-            android:text="@string/stop_device"
+            android:text="@string/txt_stop_device"
             android:textColor="@color/colorWhite"
             android:textSize="20sp" />
 
@@ -104,7 +104,7 @@
             android:layout_margin="8dp"
             android:background="@drawable/shape_bg_btn"
             android:gravity="center"
-            android:text="@string/open_device"
+            android:text="@string/txt_dev_open"
             android:textColor="@color/colorWhite"
             android:textSize="16sp" />
 
@@ -115,7 +115,7 @@
             android:layout_margin="8dp"
             android:background="@drawable/shape_bg_btn"
             android:gravity="center"
-            android:text="@string/close_device"
+            android:text="@string/txt_dev_close"
             android:textColor="@color/colorWhite"
             android:textSize="16sp" />
 
@@ -126,7 +126,7 @@
             android:layout_margin="8dp"
             android:background="@drawable/shape_bg_btn"
             android:gravity="center"
-            android:text="@string/brake_start"
+            android:text="@string/txt_brake_start"
             android:textColor="@color/colorWhite"
             android:textSize="16sp" />
 
@@ -137,7 +137,7 @@
             android:layout_margin="8dp"
             android:background="@drawable/shape_bg_btn"
             android:gravity="center"
-            android:text="@string/brake_release"
+            android:text="@string/txt_brake_release"
             android:textColor="@color/colorWhite"
             android:textSize="16sp" />
     </LinearLayout>
@@ -154,7 +154,7 @@
             android:layout_margin="8dp"
             android:background="@drawable/shape_bg_btn"
             android:gravity="center"
-            android:text="@string/open_motor"
+            android:text="@string/txt_open_motor"
             android:textColor="@color/colorWhite"
             android:textSize="16sp" />
 
@@ -165,7 +165,7 @@
             android:layout_margin="8dp"
             android:background="@drawable/shape_bg_btn"
             android:gravity="center"
-            android:text="@string/close_motor"
+            android:text="@string/txt_close_motor"
             android:textColor="@color/colorWhite"
             android:textSize="16sp" />
     </LinearLayout>

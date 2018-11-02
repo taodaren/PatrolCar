@@ -3,23 +3,23 @@ package patrolcar.bobi.cn.patrolcar;
 import android.view.View;
 
 /**
- * 设备模块
+ * 距离模块
  */
 
-public class TabDeviceFragment extends BaseFragment {
+public class TabDistanceFragment extends BaseFragment {
 
-    public static TabDeviceFragment newInstance() {
-        return new TabDeviceFragment();
+    public static TabDistanceFragment newInstance() {
+        return new TabDistanceFragment();
     }
 
     @Override
     protected int getFragmentLayout() {
-        return R.layout.fragment_tab_device;
+        return R.layout.fragment_tab_distance;
     }
 
     @Override
     public void initToolbar() {
-        setToolbar(R.id.main_toolbar, R.string.text_tab_device, View.VISIBLE);
+        setToolbar(R.id.main_toolbar, R.string.txt_tab_mine, View.VISIBLE);
     }
 
     @Override

@@ -6,12 +6,11 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
-import com.clj.fastble.BleManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends BLECtrlMgr implements BottomNavigationBar.OnTabSelectedListener {
+public class MainActivity extends BaseActivity implements BottomNavigationBar.OnTabSelectedListener {
     private List<Fragment> mFragments;
     private Fragment mCurrentFragment;
 
@@ -41,12 +40,12 @@ public class MainActivity extends BLECtrlMgr implements BottomNavigationBar.OnTa
         // 添加 Tab
         mNavBar
                 // 设置导航图标及名称
-                .addItem(new BottomNavigationItem(R.drawable.tab_device, R.string.text_tab_device)
+                .addItem(new BottomNavigationItem(R.drawable.tab_device, R.string.txt_tab_device)
                         // 导航背景颜色
                         .setActiveColorResource(R.color.colorWhite))
-                .addItem(new BottomNavigationItem(R.drawable.tab_control, R.string.text_tab_control)
+                .addItem(new BottomNavigationItem(R.drawable.tab_control, R.string.txt_tab_control)
                         .setActiveColorResource(R.color.colorWhite))
-                .addItem(new BottomNavigationItem(R.drawable.tab_mine, R.string.text_tab_mine)
+                .addItem(new BottomNavigationItem(R.drawable.tab_mine, R.string.txt_tab_mine)
                         .setActiveColorResource(R.color.colorWhite))
                 // 默认显示面板
                 .setFirstSelectedPosition(1)
@@ -60,9 +59,9 @@ public class MainActivity extends BLECtrlMgr implements BottomNavigationBar.OnTa
     /** 将 Fragment 加入 fragments 里面 */
     private ArrayList<Fragment> getFragments() {
         ArrayList<Fragment> list = new ArrayList<>();
-        list.add(TabDeviceFragment.newInstance());
-        list.add(TabControlFragment.newInstance());
-        list.add(TabMineFragment.newInstance());
+        list.add(TabStatusFragment.newInstance());
+        list.add(TabCtrlFragment.newInstance());
+        list.add(TabDistanceFragment.newInstance());
         return list;
     }
 
@@ -119,7 +118,5 @@ public class MainActivity extends BLECtrlMgr implements BottomNavigationBar.OnTa
     protected void onDestroy() {
         super.onDestroy();
         // 断开蓝牙
-        BleManager.getInstance().disconnectAllDevice();
-        BleManager.getInstance().destroy();
     }
 }
