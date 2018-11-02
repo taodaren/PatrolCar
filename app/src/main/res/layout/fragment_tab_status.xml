@@ -8,10 +8,11 @@
 
     <include layout="@layout/layout_toolbar" />
 
-    <TextView
+    <include layout="@layout/item_status_title" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_robot_status"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:text="@string/txt_tab_device" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>

@@ -69,15 +69,15 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     private void setDefFragment() {
         Fragment defFragment = mFragments.get(1);
         if (!defFragment.isAdded()) {
-            addFragment(R.id.main_content, defFragment);
+            addFragment(defFragment);
             mCurrentFragment = defFragment;
         }
     }
 
     /** 添加 Fragment 到 Activity 的布局 */
-    protected void addFragment(int containerViewId, Fragment fragment) {
+    protected void addFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(containerViewId, fragment);
+        fragmentTransaction.add(R.id.main_content, fragment);
         fragmentTransaction.commit();
     }
 
