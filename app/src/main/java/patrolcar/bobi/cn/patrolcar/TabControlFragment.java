@@ -49,7 +49,7 @@ public class TabControlFragment extends BaseFragment {
     }
 
 
-    @OnClick({R.id.btn_ctrl_stop, R.id.rl_ctrl_up, R.id.rl_ctrl_down, R.id.rl_ctrl_left, R.id.rl_ctrl_right, R.id.open_device, R.id.close_device, R.id.brake_start, R.id.brake_release})
+    @OnClick({R.id.btn_ctrl_stop, R.id.rl_ctrl_up, R.id.rl_ctrl_down, R.id.rl_ctrl_left, R.id.rl_ctrl_right, R.id.open_device, R.id.close_device, R.id.brake_start, R.id.brake_release, R.id.open_motor, R.id.close_motor})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_ctrl_stop:
@@ -68,16 +68,22 @@ public class TabControlFragment extends BaseFragment {
                 ToastTools.showShort(getContext(), "right");
                 break;
             case R.id.open_device:
-                ToastTools.showShort(getContext(), "open");
+                ToastTools.showShort(getContext(), "open_device");
                 break;
             case R.id.close_device:
-                ToastTools.showShort(getContext(), "close");
+                ToastTools.showShort(getContext(), "close_device");
                 break;
             case R.id.brake_start:
                 ToastTools.showShort(getContext(), "start");
                 break;
             case R.id.brake_release:
                 ToastTools.showShort(getContext(), "release");
+                break;
+            case R.id.open_motor:
+                ToastTools.showShort(getContext(), "open_motor");
+                break;
+            case R.id.close_motor:
+                ToastTools.showShort(getContext(), "close_motor");
                 break;
         }
     }
