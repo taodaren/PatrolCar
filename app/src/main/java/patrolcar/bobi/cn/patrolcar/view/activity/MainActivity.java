@@ -15,6 +15,7 @@ import patrolcar.bobi.cn.patrolcar.view.fragment.TabCtrlFragment;
 import patrolcar.bobi.cn.patrolcar.view.fragment.TabDistanceFragment;
 import patrolcar.bobi.cn.patrolcar.view.fragment.TabStatusFragment;
 import patrolcar.bobi.cn.patrolcar.view.base.BaseActivity;
+import patrolcar.bobi.cn.patrolcar.view.fragment.TabVideoFragment;
 
 public class MainActivity extends BaseActivity implements BottomNavigationBar.OnTabSelectedListener {
     private List<Fragment> mFragments;
@@ -51,6 +52,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                         .setActiveColorResource(R.color.colorWhite))
                 .addItem(new BottomNavigationItem(R.drawable.tab_distance, R.string.txt_distance_dis)
                         .setActiveColorResource(R.color.colorWhite))
+//                .addItem(new BottomNavigationItem(R.drawable.tab_video, "VIDEO")
+//                        .setActiveColorResource(R.color.colorWhite))
                 // 默认显示面板
                 .setFirstSelectedPosition(1)
                 // 初始化
@@ -65,6 +68,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         list.add(TabStatusFragment.newInstance());
         list.add(TabCtrlFragment.newInstance());
         list.add(TabDistanceFragment.newInstance());
+//        list.add(TabVideoFragment.newInstance());
         return list;
     }
 

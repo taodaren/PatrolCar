@@ -23,7 +23,6 @@ public class TabDistanceFragment extends BaseFragment {
 
     private List<DistanceBean> mList = new ArrayList<>();
 
-
     public static TabDistanceFragment newInstance() {
         return new TabDistanceFragment();
     }
