@@ -35,29 +35,26 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     /** 设置底部导航 */
     private void initBtnNavBar() {
         BottomNavigationBar mNavBar = findViewById(R.id.bottom_navigation_bar);
-
         // 设置模块名背景色
         mNavBar.setBarBackgroundColor(R.color.colorPrimary);
         // 设置背景模式
         mNavBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_RIPPLE);
         // 设置Tab点击的模式
         mNavBar.setMode(BottomNavigationBar.MODE_FIXED);
-
         // 添加 Tab
         mNavBar
                 // 设置导航图标及名称
-                .addItem(new BottomNavigationItem(R.drawable.tab_device, R.string.txt_tab_device)
+                .addItem(new BottomNavigationItem(R.drawable.tab_status, R.string.txt_tab_device)
                         // 导航背景颜色
                         .setActiveColorResource(R.color.colorWhite))
-                .addItem(new BottomNavigationItem(R.drawable.tab_control, R.string.txt_tab_control)
+                .addItem(new BottomNavigationItem(R.drawable.tab_ctrl, R.string.txt_tab_control)
                         .setActiveColorResource(R.color.colorWhite))
-                .addItem(new BottomNavigationItem(R.drawable.tab_mine, R.string.txt_distance_dis)
+                .addItem(new BottomNavigationItem(R.drawable.tab_distance, R.string.txt_distance_dis)
                         .setActiveColorResource(R.color.colorWhite))
                 // 默认显示面板
                 .setFirstSelectedPosition(1)
                 // 初始化
                 .initialise();
-
         // 设置事件监听器
         mNavBar.setTabSelectedListener(this);
     }
