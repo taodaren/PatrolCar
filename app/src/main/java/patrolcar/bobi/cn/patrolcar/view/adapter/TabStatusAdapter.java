@@ -1,4 +1,4 @@
-package patrolcar.bobi.cn.patrolcar;
+package patrolcar.bobi.cn.patrolcar.view.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +9,11 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import patrolcar.bobi.cn.patrolcar.R;
+import patrolcar.bobi.cn.patrolcar.model.StatusBean;
+
 /**
  * 状态模块适配器
  */
@@ -17,23 +22,23 @@ public class TabStatusAdapter extends RecyclerView.Adapter<TabStatusAdapter.Stat
     private List<StatusBean> mList;
 
     static class StatusViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvValue, tvUnit;
+        @BindView(R.id.tv_status_name)         TextView tvName;
+        @BindView(R.id.tv_status_value)        TextView tvValue;
+        @BindView(R.id.tv_status_unit)         TextView tvUnit;
 
         StatusViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvName = itemView.findViewById(R.id.tv_status_name);
-            tvValue = itemView.findViewById(R.id.tv_status_value);
-            tvUnit = itemView.findViewById(R.id.tv_status_unit);
+            ButterKnife.bind(this, itemView);
         }
     }
 
-    TabStatusAdapter(List<StatusBean> list) {
+    public TabStatusAdapter(List<StatusBean> list) {
         this.mList = list;
     }
 
     @NonNull
     @Override
-    public TabStatusAdapter.StatusViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int position) {
+    public TabStatusAdapter.StatusViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new StatusViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_status_robot, parent, false));
     }
 

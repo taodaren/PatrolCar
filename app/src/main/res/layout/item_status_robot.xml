@@ -1,48 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="40dp">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/layout_status"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:padding="2dp">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/tv_status_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
             android:layout_weight="1"
+            android:gravity="center"
             android:padding="4dp"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/tv_status_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
             android:layout_weight="1"
+            android:gravity="center"
             android:padding="4dp"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/tv_status_unit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
             android:layout_weight="1"
+            android:gravity="center"
             android:padding="4dp"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
     </LinearLayout>
 
-    <TextView
+    <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/layout_status"
+        android:layout_height="0.5dp"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="4dp"
-        android:background="@color/colorGray" />
-</RelativeLayout>
+        android:background="@color/line" />
+</LinearLayout>

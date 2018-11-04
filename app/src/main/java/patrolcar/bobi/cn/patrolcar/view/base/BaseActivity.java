@@ -1,15 +1,17 @@
-package patrolcar.bobi.cn.patrolcar;
+package patrolcar.bobi.cn.patrolcar.view.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import butterknife.ButterKnife;
+import patrolcar.bobi.cn.patrolcar.util.LogUtil;
 
 public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtil.setLevel(LogUtil.getVERBOSE());
         // 子类不再需要设置布局 ID，也不再需要使用 ButterKnife.BindView()
         setContentView(getActivityLayout());
         ButterKnife.bind(this);

@@ -3,12 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     android:orientation="vertical"
-    tools:context=".TabStatusFragment">
+    tools:context=".view.fragment.TabStatusFragment">
 
-    <include layout="@layout/layout_toolbar" />
+    <include layout="@layout/layout_status_title" />
 
-    <include layout="@layout/item_status_title" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/line" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_robot_status"

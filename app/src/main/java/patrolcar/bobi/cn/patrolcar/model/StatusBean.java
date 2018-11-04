@@ -1,4 +1,4 @@
-package patrolcar.bobi.cn.patrolcar;
+package patrolcar.bobi.cn.patrolcar.model;
 
 /**
  * 机器人状态实体类

@@ -3,7 +3,7 @@
 
     <string name="txt_tab_device">状态</string>
     <string name="txt_tab_control">遥控</string>
-    <string name="txt_tab_mine">距离</string>
+    <string name="txt_tab_mine">测量距离</string>
 
     <string name="txt_dev_open">开机</string>
     <string name="txt_dev_close">关机</string>
@@ -12,4 +12,11 @@
     <string name="txt_brake_start">刹车</string>
     <string name="txt_brake_release">松刹</string>
     <string name="txt_stop_device">STOP</string>
+
+    <string name="txt_status_name">状态名</string>
+    <string name="txt_status_value">状态值</string>
+    <string name="txt_unit">单位</string>
+    <string name="txt_distance_did">DID</string>
+    <string name="txt_distance_dis">距离</string>
+    <string name="txt_null_data">-</string>
 </resources>

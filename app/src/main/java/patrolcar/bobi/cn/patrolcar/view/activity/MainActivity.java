@@ -1,4 +1,4 @@
-package patrolcar.bobi.cn.patrolcar;
+package patrolcar.bobi.cn.patrolcar.view.activity;
 
 import android.annotation.SuppressLint;
 import android.support.v4.app.Fragment;
@@ -9,6 +9,12 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import patrolcar.bobi.cn.patrolcar.R;
+import patrolcar.bobi.cn.patrolcar.view.fragment.TabCtrlFragment;
+import patrolcar.bobi.cn.patrolcar.view.fragment.TabDistanceFragment;
+import patrolcar.bobi.cn.patrolcar.view.fragment.TabStatusFragment;
+import patrolcar.bobi.cn.patrolcar.view.base.BaseActivity;
 
 public class MainActivity extends BaseActivity implements BottomNavigationBar.OnTabSelectedListener {
     private List<Fragment> mFragments;
@@ -45,7 +51,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                         .setActiveColorResource(R.color.colorWhite))
                 .addItem(new BottomNavigationItem(R.drawable.tab_control, R.string.txt_tab_control)
                         .setActiveColorResource(R.color.colorWhite))
-                .addItem(new BottomNavigationItem(R.drawable.tab_mine, R.string.txt_tab_mine)
+                .addItem(new BottomNavigationItem(R.drawable.tab_mine, R.string.txt_distance_dis)
                         .setActiveColorResource(R.color.colorWhite))
                 // 默认显示面板
                 .setFirstSelectedPosition(1)

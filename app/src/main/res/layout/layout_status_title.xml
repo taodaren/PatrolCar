@@ -2,42 +2,37 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/colorPrimary"
     android:gravity="center_vertical"
-    android:padding="2dp">
+    android:minHeight="?attr/actionBarSize">
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
         android:layout_weight="1"
-        android:background="@drawable/shape_bg_title"
         android:gravity="center"
         android:padding="2dp"
-        android:text="状态名"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:text="@string/txt_status_name"
+        android:textColor="@color/colorWhite"
+        android:textSize="18sp" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
         android:layout_weight="1"
-        android:background="@drawable/shape_bg_title"
         android:gravity="center"
         android:padding="2dp"
-        android:text="值"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:text="@string/txt_status_value"
+        android:textColor="@color/colorWhite"
+        android:textSize="20sp" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
         android:layout_weight="1"
-        android:background="@drawable/shape_bg_title"
         android:gravity="center"
         android:padding="2dp"
-        android:text="单位"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:text="@string/txt_unit"
+        android:textColor="@color/colorWhite"
+        android:textSize="18sp" />
 </LinearLayout>

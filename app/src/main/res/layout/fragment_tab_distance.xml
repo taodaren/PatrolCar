@@ -3,16 +3,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     android:orientation="vertical"
-    tools:context=".TabDistanceFragment">
+    tools:context=".view.fragment.TabDistanceFragment">
 
     <include layout="@layout/layout_toolbar" />
 
-    <TextView
+    <View
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/txt_tab_mine"
-        android:textSize="18sp" />
+        android:layout_height="1dp"
+        android:background="@color/line" />
 
+    <include layout="@layout/layout_distance_title" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/line" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_distance"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

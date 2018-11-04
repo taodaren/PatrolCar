@@ -1,4 +1,4 @@
-package patrolcar.bobi.cn.patrolcar;
+package patrolcar.bobi.cn.patrolcar.view.base;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import butterknife.ButterKnife;
+import patrolcar.bobi.cn.patrolcar.R;
 
 public abstract class BaseFragment extends Fragment {
 
