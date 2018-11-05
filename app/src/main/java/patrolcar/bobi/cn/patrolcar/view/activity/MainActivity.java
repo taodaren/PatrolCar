@@ -1,8 +1,12 @@
 package patrolcar.bobi.cn.patrolcar.view.activity;
 
 import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothDevice;
+import android.os.ParcelUuid;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
@@ -11,15 +15,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import patrolcar.bobi.cn.patrolcar.R;
+import patrolcar.bobi.cn.patrolcar.util.BleDevProtocol;
+import patrolcar.bobi.cn.patrolcar.util.LogUtil;
 import patrolcar.bobi.cn.patrolcar.view.fragment.TabCtrlFragment;
 import patrolcar.bobi.cn.patrolcar.view.fragment.TabDistanceFragment;
 import patrolcar.bobi.cn.patrolcar.view.fragment.TabStatusFragment;
-import patrolcar.bobi.cn.patrolcar.view.base.BaseActivity;
-import patrolcar.bobi.cn.patrolcar.view.fragment.TabVideoFragment;
 
-public class MainActivity extends BaseActivity implements BottomNavigationBar.OnTabSelectedListener {
+import static patrolcar.bobi.cn.patrolcar.app.AppConstant.UUID_GATT_CHARACTERISTIC_WRITE;
+import static patrolcar.bobi.cn.patrolcar.app.AppConstant.UUID_GATT_SERVICE;
+
+public class MainActivity extends BLEManagerActivity implements BottomNavigationBar.OnTabSelectedListener {
+    private static final String TAG = "MainActivity";
     private List<Fragment> mFragments;
     private Fragment mCurrentFragment;
+
+    static private MainActivity AppInstance;
+
+    public static MainActivity getAppCtrl() {
+        return AppInstance;
+    }
 
     @Override
     protected int getActivityLayout() {
@@ -28,9 +42,12 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 
     @Override
     public void initView() {
+        super.initView();
+        AppInstance = this;
         initBtnNavBar();
         mFragments = getFragments();
         setDefFragment();
+        scanRefresh();
     }
 
     /** 设置底部导航 */
@@ -126,4 +143,63 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         super.onDestroy();
         // 断开蓝牙
     }
+
+    public void scanRefresh() {
+        addScanFilter(UUID_GATT_SERVICE);
+        refresh();
+    }
+
+    @Override
+    void onFoundDevice(BluetoothDevice bleDevice, @Nullable List<ParcelUuid> serviceUuids) {
+        super.onFoundDevice(bleDevice, serviceUuids);
+        Log.i(TAG, "onFoundDevice serviceUuids: " + serviceUuids);
+        String name = bleDevice.getName();
+        String mac = bleDevice.getAddress();
+        Log.i(TAG, "getName: " + name);
+
+        // 通过设备广播名称，判断是否为配置的设备
+        if (name.indexOf(getAllowedConnDevName()) != 0) {
+            return;
+        }
+
+        connDevice(bleDevice.getAddress());
+        LogUtil.d(TAG, "dev mac: " + mac);
+    }
+
+    /**
+     * 设备就绪
+     */
+    @Override
+    void onDeviceReady(final String mac) {
+        LogUtil.i(TAG, "onDeviceReady " + mac);
+        if (setSendDefaultChannel(mac, UUID_GATT_CHARACTERISTIC_WRITE)) {
+        }
+    }
+
+    @Override
+    void onDeviceConnect(String mac) {
+        LogUtil.i(TAG, "onDeviceConnect " + mac);
+
+    }
+
+    /**
+     * 设备断开
+     */
+    @Override
+    void onDeviceDisconnect(String mac) {
+        unregisterPeriod(mac + "-status");
+
+    }
+
+    /**
+     * 连接设备
+     */
+    public void connDevice(final String mac) {
+        addDeviceByMac(mac);
+    }
+
+    public void sendCmd(String mac, byte[] data) {
+        send(mac, data, false);
+    }
+
 }
