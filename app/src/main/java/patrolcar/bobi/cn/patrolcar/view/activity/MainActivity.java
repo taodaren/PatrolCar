@@ -1,26 +1,35 @@
 package patrolcar.bobi.cn.patrolcar.view.activity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.bluetooth.BluetoothDevice;
 import android.os.ParcelUuid;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.CheckedTextView;
+import android.widget.ListView;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import patrolcar.bobi.cn.patrolcar.R;
-import patrolcar.bobi.cn.patrolcar.util.BleDevProtocol;
 import patrolcar.bobi.cn.patrolcar.util.LogUtil;
 import patrolcar.bobi.cn.patrolcar.view.fragment.TabCtrlFragment;
 import patrolcar.bobi.cn.patrolcar.view.fragment.TabDistanceFragment;
 import patrolcar.bobi.cn.patrolcar.view.fragment.TabStatusFragment;
 
+import static android.app.AlertDialog.THEME_HOLO_LIGHT;
 import static patrolcar.bobi.cn.patrolcar.app.AppConstant.UUID_GATT_CHARACTERISTIC_WRITE;
 import static patrolcar.bobi.cn.patrolcar.app.AppConstant.UUID_GATT_SERVICE;
 
@@ -48,6 +57,7 @@ public class MainActivity extends BLEManagerActivity implements BottomNavigation
         mFragments = getFragments();
         setDefFragment();
         scanRefresh();
+        showSelectMacDialog();
     }
 
     /** 设置底部导航 */
@@ -138,12 +148,6 @@ public class MainActivity extends BLEManagerActivity implements BottomNavigation
     public void onTabReselected(int position) {
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // 断开蓝牙
-    }
-
     public void scanRefresh() {
         addScanFilter(UUID_GATT_SERVICE);
         refresh();
@@ -152,54 +156,75 @@ public class MainActivity extends BLEManagerActivity implements BottomNavigation
     @Override
     void onFoundDevice(BluetoothDevice bleDevice, @Nullable List<ParcelUuid> serviceUuids) {
         super.onFoundDevice(bleDevice, serviceUuids);
-        Log.i(TAG, "onFoundDevice serviceUuids: " + serviceUuids);
-        String name = bleDevice.getName();
-        String mac = bleDevice.getAddress();
-        Log.i(TAG, "getName: " + name);
-
         // 通过设备广播名称，判断是否为配置的设备
-        if (name.indexOf(getAllowedConnDevName()) != 0) {
+        if (bleDevice.getName().indexOf(getAllowedConnDevName()) != 0) {
             return;
         }
-
-        connDevice(bleDevice.getAddress());
-        LogUtil.d(TAG, "dev mac: " + mac);
+        if (mAdapterByFoundMac != null) {
+            if (!mListByFoundMac.contains(bleDevice.getAddress())) {
+                mListByFoundMac.add(bleDevice.getAddress());
+                mAdapterByFoundMac.notifyDataSetChanged();
+            }
+        }
     }
 
-    /**
-     * 设备就绪
-     */
     @Override
     void onDeviceReady(final String mac) {
         LogUtil.i(TAG, "onDeviceReady " + mac);
-        if (setSendDefaultChannel(mac, UUID_GATT_CHARACTERISTIC_WRITE)) {
-        }
+        setSendDefaultChannel(mac, UUID_GATT_CHARACTERISTIC_WRITE);
     }
 
-    @Override
-    void onDeviceConnect(String mac) {
-        LogUtil.i(TAG, "onDeviceConnect " + mac);
-
-    }
-
-    /**
-     * 设备断开
-     */
-    @Override
-    void onDeviceDisconnect(String mac) {
-        unregisterPeriod(mac + "-status");
-
-    }
-
-    /**
-     * 连接设备
-     */
-    public void connDevice(final String mac) {
-        addDeviceByMac(mac);
-    }
+//    @Override
+//    void onDeviceConnect(String mac) {
+//        LogUtil.i(TAG, "onDeviceConnect " + mac);
+//    }
+//
+//    @Override
+//    void onDeviceDisconnect(String mac) {
+//        unregisterPeriod(mac + "-status");
+//    }
 
     public void sendCmd(String mac, byte[] data) {
         send(mac, data, false);
+    }
+
+    private final List<String> mListByFoundMac = new LinkedList<>();
+    private ArrayAdapter<String> mAdapterByFoundMac;
+
+    private void showSelectMacDialog() {
+        View inflate = View.inflate(this, R.layout.layout_dev_list, null);
+        ListView lv = inflate.findViewById(R.id.lv_dev_list);
+        mAdapterByFoundMac = new ArrayAdapter<String>(this, R.layout.layout_dev_address, R.id.ctv_dev_address, mListByFoundMac) {
+            @NonNull
+            @Override
+            public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View getView = super.getView(position, convertView, parent);
+                CheckedTextView ctv = getView.findViewById(R.id.ctv_dev_address);
+                ctv.setOnClickListener(view -> {
+                    CheckedTextView ct = (CheckedTextView) view;
+                    ct.toggle();
+                    lv.setItemChecked(position, ct.isChecked());
+                });
+                return getView;
+            }
+        };
+        lv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        lv.setAdapter(mAdapterByFoundMac);
+
+        Dialog selectDialog = new AlertDialog.Builder(MainActivity.this, THEME_HOLO_LIGHT)
+                .setTitle("选择设备")
+                .setView(inflate)
+                .setPositiveButton("确定", (dialog, which) -> {
+                    SparseBooleanArray selected_array = lv.getCheckedItemPositions();
+                    for (int i = 0; i < mListByFoundMac.size(); i++) {
+                        if (selected_array.get(i)) {
+                            addDeviceByMac(mListByFoundMac.get(i));
+                        }
+                    }
+                    mAdapterByFoundMac = null;
+                })
+                .create();
+        selectDialog.show();
     }
 
 }
