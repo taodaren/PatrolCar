@@ -1,5 +1,7 @@
 package patrolcar.bobi.cn.patrolcar.util;
 
+import android.util.Log;
+
 import patrolcar.bobi.cn.patrolcar.view.activity.MainActivity;
 
 import static patrolcar.bobi.cn.patrolcar.app.AppConstant.TYPE_MOTOR_CTRL_BRAKE_OFF;
@@ -15,6 +17,7 @@ import static patrolcar.bobi.cn.patrolcar.app.AppConstant.TYPE_MOTOR_CTRL_STOP;
 import static patrolcar.bobi.cn.patrolcar.app.AppConstant.TYPE_MOTOR_CTRL_UP;
 
 public class BleCmdCtrl {
+    private static final String TAG = "BleCmdCtrl";
     private static final int SEND_HEADER             = 0XA5;          // 发送命令包头
     private static final int REPLY_HEADER            = 0xCD;          // 应答报文包头
 
@@ -43,6 +46,7 @@ public class BleCmdCtrl {
     }
 
     public static void sendCmdMotorCtrl(final String mac, String type) {
+        Log.i(TAG, "sendCmdMotorCtrl1: ");
         int pwrSwitch = 0, motorSwitch = 0, brakeSignal = 0, driveMotor = 0, aDriveMotor = 0, turnMotorTime = 0, turnMotorSpeed = 0;
         switch (type) {
             case TYPE_MOTOR_CTRL_STOP:
@@ -56,12 +60,10 @@ public class BleCmdCtrl {
                 aDriveMotor = 5;
                 break;
             case TYPE_MOTOR_CTRL_LEFT:
-                aDriveMotor = 5;
                 turnMotorTime = 10;
                 turnMotorSpeed = -20;
                 break;
             case TYPE_MOTOR_CTRL_RIGHT:
-                aDriveMotor = 5;
                 turnMotorTime = 10;
                 turnMotorSpeed = 20;
                 break;
@@ -84,8 +86,56 @@ public class BleCmdCtrl {
                 motorSwitch = 0X55;
                 break;
         }
-        byte[] bytes = pkgMotorCtrl( pwrSwitch,  motorSwitch,  brakeSignal,  driveMotor,  aDriveMotor,  turnMotorTime,  turnMotorSpeed);
+
+        byte[] bytes = pkgMotorCtrl(pwrSwitch, motorSwitch, brakeSignal, driveMotor, aDriveMotor, turnMotorTime, turnMotorSpeed);
+        MainActivity.getAppCtrl().sendCmd(mac, BleDevProtocol.cmdPkg(SEND_HEADER, CMD_MOTOR_CTRL, bytes, CRC_MOTOR_CTRL));
+    }
+
+    public static void sendCmdMotorCtrl(final String mac, String type, int para1, int para2) {
+        int pwrSwitch = 0, motorSwitch = 0, brakeSignal = 0, driveMotor = 0, aDriveMotor = 0, turnMotorTime = 0, turnMotorSpeed = 0;
+        switch (type) {
+            case TYPE_MOTOR_CTRL_STOP:
+                break;
+            case TYPE_MOTOR_CTRL_UP:
+                driveMotor = para1;
+                aDriveMotor = para2;
+                break;
+            case TYPE_MOTOR_CTRL_DOWN:
+                driveMotor = para1;
+                aDriveMotor = para2;
+                break;
+            case TYPE_MOTOR_CTRL_LEFT:
+                turnMotorTime = para1;
+                turnMotorSpeed = para2;
+                break;
+            case TYPE_MOTOR_CTRL_RIGHT:
+                turnMotorTime = para1;
+                turnMotorSpeed = para2;
+                break;
+            case TYPE_MOTOR_CTRL_DEV_ON:
+                pwrSwitch = para1;
+                break;
+            case TYPE_MOTOR_CTRL_DEV_OFF:
+                pwrSwitch = para1;
+                break;
+            case TYPE_MOTOR_CTRL_BRAKE_ON:
+                brakeSignal = para1;
+                break;
+            case TYPE_MOTOR_CTRL_BRAKE_OFF:
+                brakeSignal = para1;
+                break;
+            case TYPE_MOTOR_CTRL_MOTOR_ON:
+                motorSwitch = para1;
+                break;
+            case TYPE_MOTOR_CTRL_MOTOR_OFF:
+                motorSwitch = para1;
+                break;
+        }
+
+
+        byte[] bytes = pkgMotorCtrl(pwrSwitch, motorSwitch, brakeSignal, driveMotor, aDriveMotor, turnMotorTime, turnMotorSpeed);
         MainActivity.getAppCtrl().sendCmd(mac, BleDevProtocol.cmdPkg(SEND_HEADER, CMD_MOTOR_CTRL, bytes, CRC_MOTOR_CTRL));
     }
 
 }
+

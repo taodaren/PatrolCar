@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -183,6 +184,7 @@ public class MainActivity extends BLEManagerActivity implements BottomNavigation
 //    }
 
     public void sendCmd(String mac, byte[] data) {
+//        Log.w("TabCtrlFragment", "sendCmd: ");
         send(mac, data, false);
     }
 
@@ -212,6 +214,7 @@ public class MainActivity extends BLEManagerActivity implements BottomNavigation
         Dialog selectDialog = new AlertDialog.Builder(MainActivity.this, THEME_HOLO_LIGHT)
                 .setTitle("选择设备")
                 .setView(inflate)
+                .setCancelable(false)
                 .setPositiveButton("确定", (dialog, which) -> {
                     SparseBooleanArray selected_array = lv.getCheckedItemPositions();
                     for (int i = 0; i < mListByFoundMac.size(); i++) {
