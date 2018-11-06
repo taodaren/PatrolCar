@@ -57,6 +57,9 @@ import patrolcar.bobi.cn.patrolcar.view.base.BaseActivity;
 public class BLEManagerActivity extends BaseActivity {
     private static final String TAG = BLEManagerActivity.class.getSimpleName();
     private static final String BLE_DEV_NAME = "EENENG-CAR-01";
+    public static final ParcelUuid UUID_GATT_SERVICE = ParcelUuid.fromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
+    public static final UUID UUID_GATT_CHARACTERISTIC_WRITE = UUID.fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e");
+
     private static final int MAX_BLUETOOTH_SEND_PKG_LEN = 18;        // 蓝牙发送包的最大长度
     private static final int REQUEST_ENABLE_BT = 38192;              // 请求启用蓝牙
     private static final int REFRESHING_PERIOD = 60 * 1000;          // 刷新周期

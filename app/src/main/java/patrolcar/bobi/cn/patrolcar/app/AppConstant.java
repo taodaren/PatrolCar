@@ -1,15 +1,19 @@
 package patrolcar.bobi.cn.patrolcar.app;
 
-import android.os.ParcelUuid;
-
-import java.util.UUID;
-
 /**
  * 全局常量
  */
 
 public class AppConstant {
-    public static final String BLE_DEVICE_NAME = "EEJING-CHJ-01";
-    public static final ParcelUuid UUID_GATT_SERVICE = ParcelUuid.fromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
-    public static final UUID UUID_GATT_CHARACTERISTIC_WRITE = UUID.fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e");
+    public static final String TYPE_MOTOR_CTRL_STOP      = "停止";
+    public static final String TYPE_MOTOR_CTRL_UP        = "前进";
+    public static final String TYPE_MOTOR_CTRL_DOWN      = "后退";
+    public static final String TYPE_MOTOR_CTRL_LEFT      = "左转";
+    public static final String TYPE_MOTOR_CTRL_RIGHT     = "右转";
+    public static final String TYPE_MOTOR_CTRL_DEV_ON    = "开机";
+    public static final String TYPE_MOTOR_CTRL_DEV_OFF   = "关机";
+    public static final String TYPE_MOTOR_CTRL_BRAKE_ON  = "刹车";
+    public static final String TYPE_MOTOR_CTRL_BRAKE_OFF = "松刹车";
+    public static final String TYPE_MOTOR_CTRL_MOTOR_ON  = "开电机";
+    public static final String TYPE_MOTOR_CTRL_MOTOR_OFF = "关电机";
 }

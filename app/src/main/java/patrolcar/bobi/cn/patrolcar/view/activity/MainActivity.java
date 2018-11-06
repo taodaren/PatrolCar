@@ -30,8 +30,6 @@ import patrolcar.bobi.cn.patrolcar.view.fragment.TabDistanceFragment;
 import patrolcar.bobi.cn.patrolcar.view.fragment.TabStatusFragment;
 
 import static android.app.AlertDialog.THEME_HOLO_LIGHT;
-import static patrolcar.bobi.cn.patrolcar.app.AppConstant.UUID_GATT_CHARACTERISTIC_WRITE;
-import static patrolcar.bobi.cn.patrolcar.app.AppConstant.UUID_GATT_SERVICE;
 
 public class MainActivity extends BLEManagerActivity implements BottomNavigationBar.OnTabSelectedListener {
     private static final String TAG = "MainActivity";
