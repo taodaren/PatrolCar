@@ -14,115 +14,198 @@
         android:layout_height="1dp"
         android:background="@color/line" />
 
-    <RelativeLayout
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_gravity="center"
-        android:layout_margin="60dp"
-        android:background="@drawable/shape_bg_btn">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
 
-        <Button
-            android:id="@+id/btn_ctrl_stop"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_centerInParent="true"
-            android:background="@drawable/shape_bg_btn"
-            android:text="@string/txt_stop_device"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text="蒙蛋"
             android:textColor="@color/colorWhite"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text="巡逻"
+            android:textColor="@color/colorWhite"
+            android:textSize="16sp" />
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="40dp">
 
         <RelativeLayout
-            android:id="@+id/rl_ctrl_up"
-            android:layout_width="100dp"
-            android:layout_height="48dp"
-            android:layout_above="@id/btn_ctrl_stop"
-            android:layout_centerHorizontal="true">
+            android:id="@+id/layout_direction_ctrl"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/shape_bg_btn">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <Button
+                android:id="@+id/btn_ctrl_stop"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/ic_ctrl_up"
-                tools:ignore="ContentDescription" />
+                android:background="@drawable/shape_bg_btn"
+                android:text="@string/txt_stop_device"
+                android:textColor="@color/colorWhite"
+                android:textSize="20sp" />
+
+            <RelativeLayout
+                android:id="@+id/rl_ctrl_up"
+                android:layout_width="100dp"
+                android:layout_height="48dp"
+                android:layout_above="@id/btn_ctrl_stop"
+                android:layout_centerHorizontal="true">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_ctrl_up"
+                    tools:ignore="ContentDescription" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_ctrl_down"
+                android:layout_width="100dp"
+                android:layout_height="48dp"
+                android:layout_below="@id/btn_ctrl_stop"
+                android:layout_centerHorizontal="true">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_ctrl_down"
+                    tools:ignore="ContentDescription" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_ctrl_left"
+                android:layout_width="48dp"
+                android:layout_height="100dp"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/btn_ctrl_stop">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_ctrl_left"
+                    tools:ignore="ContentDescription" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_ctrl_right"
+                android:layout_width="48dp"
+                android:layout_height="100dp"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/btn_ctrl_stop">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_ctrl_right"
+                    tools:ignore="ContentDescription" />
+            </RelativeLayout>
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/rl_ctrl_down"
-            android:layout_width="100dp"
-            android:layout_height="48dp"
-            android:layout_below="@id/btn_ctrl_stop"
-            android:layout_centerHorizontal="true">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/layout_direction_ctrl"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/ic_ctrl_down"
-                tools:ignore="ContentDescription" />
+            <TextView
+                android:id="@+id/tv_dev_on"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/shape_bg_btn"
+                android:gravity="center"
+                android:text="@string/txt_dev_open"
+                android:textColor="@color/colorWhite"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_dev_off"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="8dp"
+                android:background="@drawable/shape_bg_btn"
+                android:gravity="center"
+                android:text="@string/txt_dev_close"
+                android:textColor="@color/colorWhite"
+                android:textSize="16sp" />
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/rl_ctrl_left"
-            android:layout_width="48dp"
-            android:layout_height="100dp"
-            android:layout_centerVertical="true"
-            android:layout_toStartOf="@id/btn_ctrl_stop">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@id/layout_direction_ctrl"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/ic_ctrl_left"
-                tools:ignore="ContentDescription" />
-        </RelativeLayout>
+            <TextView
+                android:id="@+id/tv_motor_on"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/shape_bg_btn"
+                android:gravity="center"
+                android:text="@string/txt_open_motor"
+                android:textColor="@color/colorWhite"
+                android:textSize="16sp" />
 
-        <RelativeLayout
-            android:id="@+id/rl_ctrl_right"
-            android:layout_width="48dp"
-            android:layout_height="100dp"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/btn_ctrl_stop">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/ic_ctrl_right"
-                tools:ignore="ContentDescription" />
+            <TextView
+                android:id="@+id/tv_motor_off"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="8dp"
+                android:background="@drawable/shape_bg_btn"
+                android:gravity="center"
+                android:text="@string/txt_close_motor"
+                android:textColor="@color/colorWhite"
+                android:textSize="16sp" />
         </RelativeLayout>
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
         android:gravity="center_horizontal">
 
         <TextView
-            android:id="@+id/tv_dev_on"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_margin="8dp"
-            android:background="@drawable/shape_bg_btn"
-            android:gravity="center"
-            android:text="@string/txt_dev_open"
-            android:textColor="@color/colorWhite"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/tv_dev_off"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_margin="8dp"
-            android:background="@drawable/shape_bg_btn"
-            android:gravity="center"
-            android:text="@string/txt_dev_close"
-            android:textColor="@color/colorWhite"
-            android:textSize="16sp" />
-
-        <TextView
             android:id="@+id/tv_brake_on"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="68dp"
+            android:layout_height="48dp"
             android:layout_margin="8dp"
             android:background="@drawable/shape_bg_btn"
             android:gravity="center"
@@ -132,40 +215,12 @@
 
         <TextView
             android:id="@+id/tv_brake_off"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="68dp"
+            android:layout_height="48dp"
             android:layout_margin="8dp"
             android:background="@drawable/shape_bg_btn"
             android:gravity="center"
             android:text="@string/txt_brake_release"
-            android:textColor="@color/colorWhite"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal">
-
-        <TextView
-            android:id="@+id/tv_motor_on"
-            android:layout_width="64dp"
-            android:layout_height="48dp"
-            android:layout_margin="8dp"
-            android:background="@drawable/shape_bg_btn"
-            android:gravity="center"
-            android:text="@string/txt_open_motor"
-            android:textColor="@color/colorWhite"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/tv_motor_off"
-            android:layout_width="64dp"
-            android:layout_height="48dp"
-            android:layout_margin="8dp"
-            android:background="@drawable/shape_bg_btn"
-            android:gravity="center"
-            android:text="@string/txt_close_motor"
             android:textColor="@color/colorWhite"
             android:textSize="16sp" />
     </LinearLayout>
