@@ -203,7 +203,7 @@ public class BLEMgrActivity extends BaseActivity {
             mHandler.removeCallbacks(s.first);
         }
         */
-        LogUtil.i(TAG, "onPause");
+        LogUtil.d(TAG, "onPause");
     }
 
     @Override
@@ -291,7 +291,7 @@ public class BLEMgrActivity extends BaseActivity {
 
     /** 蓝牙启用 */
     private void bleEnabled() {
-        Log.i(TAG, "bleEnabled: ");
+        Log.i(TAG, "bleEnabled");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             AndPermission.with(this)
                     .permission(Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -331,7 +331,7 @@ public class BLEMgrActivity extends BaseActivity {
 
     @SuppressWarnings("SameParameterValue")
     void addScanFilter(ParcelUuid uuid) {
-        LogUtil.i(TAG, "addScanFilter: ");
+        LogUtil.i(TAG, "addScanFilter");
         ScanFilter filter = new ScanFilter.Builder()
                 .setServiceUuid(uuid)
                 .build();

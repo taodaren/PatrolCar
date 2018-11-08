@@ -3,8 +3,12 @@ package patrolcar.bobi.cn.patrolcar.util;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.security.SecureRandom;
 import java.util.Arrays;
+
+import patrolcar.bobi.cn.patrolcar.model.CarStatusEvent;
 
 
 /**
@@ -14,7 +18,8 @@ import java.util.Arrays;
 public class BleDevProtocol {
     private final static String TAG = "BleDevProtocol";
     private final static int MAX_PKG_LEN = 0x80;
-    private final static int CMD_GET_STATUS = 1;                                // 获取内部状态
+    private final static int PKG_LEN_STATUS = 0x2e;
+    private final static int CMD_GET_STATUS = 1;
 
     private final static int HEADER_LEN = 7;
     private final byte[] pkg = new byte[MAX_PKG_LEN];
@@ -28,16 +33,43 @@ public class BleDevProtocol {
         }
     }
 
+//    /** 转义判断 */
+//    private void onByte(byte b) {
+//        if (mTranslate) {
+//            mTranslate = false;
+//            onByteLevel2((byte) (((int) b & 0xff) ^ 0xFF), true);
+//        } else if (b == (byte) 0xFE) {
+//            mTranslate = true;
+//        } else {
+//            onByteLevel2(b, false);
+//        }
+//    }
+
+    private int nRevCnt;
+    private byte[] mPkgStatus = new byte[PKG_LEN_STATUS];
+    private byte PkgLen;
 
     /** 转义判断 */
     private void onByte(byte b) {
-        if (mTranslate) {
-            mTranslate = false;
-            onByteLevel2((byte) (((int) b & 0xff) ^ 0xFF), true);
-        } else if (b == (byte) 0xFE) {
-            mTranslate = true;
+        if (nRevCnt == 0) {
+            if (b == (byte) 0XA5) {
+                mPkgStatus[0] = b;
+                nRevCnt = 1;
+            }
+        } else if (nRevCnt == 1) {
+            PkgLen = b;
+            mPkgStatus[nRevCnt] = b;
+            nRevCnt = 2;
         } else {
-            onByteLevel2(b, false);
+            mPkgStatus[nRevCnt] = b;
+            nRevCnt++;
+            if (nRevCnt >= PkgLen) {
+                nRevCnt = 0;
+                EventBus.getDefault().post(new CarStatusEvent(mPkgStatus));
+//                for (int i = 0; i < PkgLen; i++) {
+//                    LogUtil.d(TAG, "rev_done " + i + "=" + Util.byteToString(mPkgStatus[i]));
+//                }
+            }
         }
     }
 
@@ -68,34 +100,34 @@ public class BleDevProtocol {
         return map(S, i, d);
     }
 
-    /** 二级转义判断 */
-    private void onByteLevel2(byte b, boolean isTranslated) {
-        if (b == (byte) 0xDC && !isTranslated) {
-            type = 1;
-        } else if (type == 1) {
-            dataLen = (int) b & 0xff;
-            if (dataLen > MAX_PKG_LEN) {
-                type = 0;
-            } else {
-                niS = 0;
-                type = 2;
-            }
-        } else if (type == 2) {
-            S[niS] = b;
-            niS++;
-            if (niS >= S.length) {
-                type = 3;
-                mPkgLen = 0;
-            }
-        } else if (type == 3) {
-            pkg[mPkgLen] = map(mPkgLen, b);
-            mPkgLen++;
-            if (mPkgLen >= dataLen) {
-                type = 0;
-                validatePkg();
-            }
-        }
-    }
+//    /** 二级转义判断 */
+//    private void onByteLevel2(byte b, boolean isTranslated) {
+//        if (b == (byte) 0xDC && !isTranslated) {
+//            type = 1;
+//        } else if (type == 1) {
+//            dataLen = (int) b & 0xff;
+//            if (dataLen > MAX_PKG_LEN) {
+//                type = 0;
+//            } else {
+//                niS = 0;
+//                type = 2;
+//            }
+//        } else if (type == 2) {
+//            S[niS] = b;
+//            niS++;
+//            if (niS >= S.length) {
+//                type = 3;
+//                mPkgLen = 0;
+//            }
+//        } else if (type == 3) {
+//            pkg[mPkgLen] = map(mPkgLen, b);
+//            mPkgLen++;
+//            if (mPkgLen >= dataLen) {
+//                type = 0;
+//                validatePkg();
+//            }
+//        }
+//    }
 
     /** 验证 PKG */
     private void validatePkg() {

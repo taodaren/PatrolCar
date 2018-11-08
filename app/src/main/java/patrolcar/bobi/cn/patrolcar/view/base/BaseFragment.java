@@ -12,8 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import butterknife.ButterKnife;
 import patrolcar.bobi.cn.patrolcar.R;
+import patrolcar.bobi.cn.patrolcar.model.CarStatusEvent;
 
 public abstract class BaseFragment extends Fragment {
 
@@ -22,6 +27,7 @@ public abstract class BaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        EventBus.getDefault().register(this);
         // 子类不再需要设置布局 ID，也不再需要使用 ButterKnife.BindView()
         mInflateView = inflater.inflate(getFragmentLayout(), container, false);
         ButterKnife.bind(this, mInflateView);
@@ -78,4 +84,16 @@ public abstract class BaseFragment extends Fragment {
             actionBar.setDisplayShowTitleEnabled(false);
         }
     }
+
+    /** 巡逻车状态 */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventCarStatus(CarStatusEvent event) {
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
 }

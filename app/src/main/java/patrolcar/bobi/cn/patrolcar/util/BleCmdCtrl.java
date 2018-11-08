@@ -6,13 +6,13 @@ import patrolcar.bobi.cn.patrolcar.view.activity.MainActivity;
 
 public class BleCmdCtrl {
     private static final String TAG = "BleCmdCtrl";
-    private static final int SEND_HEADER = 0XA5;          // 发送命令包头
+    private static final int SEND_HEADER = 0XA5;           // 发送命令包头
     private static final int REPLY_HEADER = 0xCD;          // 应答报文包头
 
     private static final int CMD_UPLOAD_SENSOR_VALUE = 1;             // 上传传感器值
-    private static final int CMD_MOTOR_CTRL = 2;             // 电机控制
-    private static final int CMD_LIGHT_CTRL = 3;             // 车灯控制
-    private static final int CMD_MOTOR_STATUS = 4;             // 上传电机板内部状态
+    private static final int CMD_MOTOR_CTRL          = 2;             // 电机控制
+    private static final int CMD_LIGHT_CTRL          = 3;             // 车灯控制
+    private static final int CMD_MOTOR_STATUS        = 4;             // 上传电机板内部状态
     private static final int CMD_MOTOR_TURN = 5;             // 告诉电机板当前车轮转向
 
     private static final int CRC_UPLOAD_SENSOR_VALUE = 0x7A5B;        // 上传传感器值
@@ -49,6 +49,10 @@ public class BleCmdCtrl {
     public static void sendCmdMotorCtrl(String mac, int pwrSwitch, int motorSwitch, int brakeSignal, int driveMotor, int acc, int turnMotorTime, int turnMotorSpeed) {
         byte[] bytes = pkgMotorCtrl(pwrSwitch, motorSwitch, brakeSignal, driveMotor, acc, turnMotorTime, turnMotorSpeed);
         MainActivity.getAppCtrl().sendCmd(mac, BleDevProtocol.cmdPkg(SEND_HEADER, CMD_MOTOR_CTRL, bytes, CRC_MOTOR_CTRL));
+    }
+
+    public static void getSensorStatus() {
+        
     }
 
 }
