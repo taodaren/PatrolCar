@@ -1,5 +1,7 @@
 package patrolcar.bobi.cn.patrolcar.util;
 
+import android.util.Log;
+
 import patrolcar.bobi.cn.patrolcar.view.activity.MainActivity;
 
 public class BleCmdCtrl {
@@ -20,6 +22,7 @@ public class BleCmdCtrl {
 
     private static byte[] pkgMotorCtrl(int pwrSwitch, int motorSwitch, int brakeSignal, int driveMotor,
                                        int aDriveMotor, int turnMotorTime, int turnMotorSpeed) {
+        Log.i(TAG, "pkgMotorCtrl");
         byte[] motorCtrl = new byte[7];
         motorCtrl[0] = (byte) (pwrSwitch & 0XFF);
         motorCtrl[1] = (byte) (motorSwitch & 0XFF);

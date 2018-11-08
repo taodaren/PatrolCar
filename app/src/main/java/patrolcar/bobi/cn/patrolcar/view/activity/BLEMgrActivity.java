@@ -54,8 +54,8 @@ import patrolcar.bobi.cn.patrolcar.view.base.BaseActivity;
  * 管理多个BLE设备的发现、连接、通讯
  */
 
-public class BLEManagerActivity extends BaseActivity {
-    private static final String TAG = BLEManagerActivity.class.getSimpleName();
+public class BLEMgrActivity extends BaseActivity {
+    private static final String TAG = BLEMgrActivity.class.getSimpleName();
     private static final String BLE_DEV_NAME = "EENENG-CAR-01";
     public static final ParcelUuid UUID_GATT_SERVICE = ParcelUuid.fromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
     public static final UUID UUID_GATT_CHARACTERISTIC_WRITE = UUID.fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e");
@@ -297,7 +297,7 @@ public class BLEManagerActivity extends BaseActivity {
                     .permission(Manifest.permission.ACCESS_COARSE_LOCATION)
                     .rationale(mDefRationale)
                     .onDenied(permissions -> {
-                        if (AndPermission.hasAlwaysDeniedPermission(BLEManagerActivity.this, permissions)) {
+                        if (AndPermission.hasAlwaysDeniedPermission(BLEMgrActivity.this, permissions)) {
                             // 如果用户一直否认许可，提示用户自行设置
                             showSetting(permissions);
                         }
@@ -391,7 +391,7 @@ public class BLEManagerActivity extends BaseActivity {
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
             String mac = result.getDevice().getAddress();
-            LogUtil.i(TAG, "onScanResult " + callbackType + " " + mac + " | " + result.getDevice().getName());
+            LogUtil.d(TAG, "onScanResult " + callbackType + " " + mac + " | " + result.getDevice().getName());
             if (callbackType == ScanSettings.CALLBACK_TYPE_ALL_MATCHES) {
                 // 如果回调类型全部匹配
                 if (!mDevMgrSet.containsKey(mac)) {
@@ -425,11 +425,11 @@ public class BLEManagerActivity extends BaseActivity {
     void onFoundDevice(BluetoothDevice bleDevice, @Nullable List<ParcelUuid> serviceUuids) {
         String name = bleDevice.getName();
         String mac = bleDevice.getAddress();
-        LogUtil.i(TAG, "onFoundDevice " + mac + " | " + name);
+        LogUtil.d(TAG, "onFoundDevice " + mac + " | " + name);
 
         if (serviceUuids != null) {
             for (ParcelUuid uuid : serviceUuids) {
-                LogUtil.i(TAG, "serviceUuid " + uuid.toString());
+                LogUtil.d(TAG, "serviceUuid " + uuid.toString());
             }
         }
     }
@@ -670,7 +670,7 @@ public class BLEManagerActivity extends BaseActivity {
     };
 
     void onReceive(String mac, byte[] data) {
-        LogUtil.i(TAG, "recv from " + mac + " : " + Util.hex(data, data.length));
+        LogUtil.d(TAG, "recv from " + mac + " : " + Util.hex(data, data.length));
     }
 
     void onDeviceReady(String mac) {

@@ -95,36 +95,36 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_ctrl_stop:
-                clearZero();
+                clearZero(true);
                 cmdMotorCtrl();
                 break;
             case R.id.tv_dev_on:
-                clearZero();
+                clearZero(true);
                 mPwrSwitch = 0X66;
                 cmdMotorCtrl();
                 break;
             case R.id.tv_dev_off:
-                clearZero();
+                clearZero(true);
                 mPwrSwitch = 0X77;
                 cmdMotorCtrl();
                 break;
             case R.id.tv_brake_on:
-                clearZero();
+                clearZero(true);
                 mBrakeSignal = 1;
                 cmdMotorCtrl();
                 break;
             case R.id.tv_brake_off:
-                clearZero();
+                clearZero(true);
                 mBrakeSignal = 2;
                 cmdMotorCtrl();
                 break;
             case R.id.tv_motor_on:
-                clearZero();
+                clearZero(true);
                 mMotorSwitch = 0X88;
                 cmdMotorCtrl();
                 break;
             case R.id.tv_motor_off:
-                clearZero();
+                clearZero(true);
                 mMotorSwitch = 0X55;
                 cmdMotorCtrl();
                 break;
@@ -156,19 +156,19 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
                 // 松开事件发生后执行代码的区域
                 switch (v.getId()) {
                     case R.id.rl_ctrl_up:
-                        mDriveMotor = 0;
                         mHandler.removeMessages(MSG_UP);
                         break;
                     case R.id.rl_ctrl_down:
-                        mDriveMotor = 0;
                         mHandler.removeMessages(MSG_DOWN);
                         break;
                     case R.id.rl_ctrl_left:
                         mHandler.removeMessages(MSG_LEFT);
+                        clearZero(false);
                         cmdMotorCtrl();
                         break;
                     case R.id.rl_ctrl_right:
                         mHandler.removeMessages(MSG_RIGHT);
+                        clearZero(false);
                         cmdMotorCtrl();
                         break;
                 }
@@ -182,12 +182,18 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
         BleCmdCtrl.sendCmdMotorCtrl(MAC, mPwrSwitch, mMotorSwitch, mBrakeSignal, mDriveMotor, mAcc, mTurnMotorTime, mTurnMotorSpeed);
     }
 
-    /** 所有数据清零 */
-    private void clearZero() {
+    /**
+     * 所有数据清零
+     *
+     * @param isClearDriveMotor 驱动电机是否清零
+     */
+    private void clearZero(boolean isClearDriveMotor) {
+        if (isClearDriveMotor) {
+            mDriveMotor = 0;
+        }
         mPwrSwitch = 0;
         mMotorSwitch = 0;
         mBrakeSignal = 0;
-        mDriveMotor = 0;
         mAcc = 0;
         mTurnMotorTime = 0;
         mTurnMotorSpeed = 0;

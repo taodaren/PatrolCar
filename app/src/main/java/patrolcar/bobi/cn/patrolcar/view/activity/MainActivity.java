@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +31,7 @@ import patrolcar.bobi.cn.patrolcar.view.fragment.TabStatusFragment;
 
 import static android.app.AlertDialog.THEME_HOLO_LIGHT;
 
-public class MainActivity extends BLEManagerActivity implements BottomNavigationBar.OnTabSelectedListener {
+public class MainActivity extends BLEMgrActivity implements BottomNavigationBar.OnTabSelectedListener {
     private static final String TAG = "MainActivity";
     private List<Fragment> mFragments;
     private Fragment mCurrentFragment;
