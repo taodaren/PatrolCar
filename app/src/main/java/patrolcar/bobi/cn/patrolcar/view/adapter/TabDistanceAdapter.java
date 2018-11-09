@@ -48,14 +48,18 @@ public class TabDistanceAdapter extends RecyclerView.Adapter<TabDistanceAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         DistanceBean bean = mList.get(position);
         holder.tvDid.setText(bean.getDid());
-        holder.tvDis1.setText(bean.getDistance1());
-        holder.tvDis2.setText(bean.getDistance2());
-        holder.tvDis3.setText(bean.getDistance3());
-        holder.tvDis4.setText(bean.getDistance4());
-        holder.tvDis5.setText(bean.getDistance5());
-        holder.tvDis6.setText(bean.getDistance6());
-        holder.tvDis7.setText(bean.getDistance7());
-        holder.tvDis8.setText(bean.getDistance8());
+        try {
+            holder.tvDis1.setText(bean.getDisArr()[0]);
+            holder.tvDis2.setText(bean.getDisArr()[1]);
+            holder.tvDis3.setText(bean.getDisArr()[2]);
+            holder.tvDis4.setText(bean.getDisArr()[3]);
+            holder.tvDis5.setText(bean.getDisArr()[4]);
+            holder.tvDis6.setText(bean.getDisArr()[5]);
+            holder.tvDis7.setText(bean.getDisArr()[6]);
+            holder.tvDis8.setText(bean.getDisArr()[7]);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

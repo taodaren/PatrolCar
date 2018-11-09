@@ -2,6 +2,7 @@ package patrolcar.bobi.cn.patrolcar.view.fragment;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import patrolcar.bobi.cn.patrolcar.R;
-import patrolcar.bobi.cn.patrolcar.model.CarStatusEvent;
+import patrolcar.bobi.cn.patrolcar.model.DealWithPkgEvent;
 import patrolcar.bobi.cn.patrolcar.model.StatusBean;
 import patrolcar.bobi.cn.patrolcar.util.LogUtil;
 import patrolcar.bobi.cn.patrolcar.util.Util;
@@ -58,6 +59,7 @@ import static patrolcar.bobi.cn.patrolcar.app.AppConstant.CCM_STATE_WHEEL_RBH;
 import static patrolcar.bobi.cn.patrolcar.app.AppConstant.CCM_STATE_WHEEL_RBL;
 import static patrolcar.bobi.cn.patrolcar.app.AppConstant.CCM_STATE_WHEEL_RFH;
 import static patrolcar.bobi.cn.patrolcar.app.AppConstant.CCM_STATE_WHEEL_RFL;
+import static patrolcar.bobi.cn.patrolcar.app.AppConstant.STATUS_NOTHING;
 
 /**
  * 状态模块
@@ -65,7 +67,6 @@ import static patrolcar.bobi.cn.patrolcar.app.AppConstant.CCM_STATE_WHEEL_RFL;
 
 public class TabStatusFragment extends BaseFragment {
     private static final String TAG = "TabStatusFragment";
-    private static final String STATUS_NOTHING = "-";
 
     @BindView(R.id.rv_robot_status)    RecyclerView rvRobotStatus;
 
@@ -92,35 +93,38 @@ public class TabStatusFragment extends BaseFragment {
     @Override
     public void initView(View rootView) {
         initStatus();
-        refreshStatus();
+        refreshData();
     }
 
     @Override
-    public void onEventCarStatus(CarStatusEvent event) {
-        super.onEventCarStatus(event);
-        byte[] pkgStatus = event.getPkgStatus();
-        if (pkgStatus[0] == (byte) 0xa5 && pkgStatus[1] == (CCM_STATE_DATA_CNT + 5)) {
-            byte[] recvData = Util.bytesGetSub(pkgStatus, 3, CCM_STATE_DATA_CNT);
+    public void onEventDealWithPkg(DealWithPkgEvent event) {
+        super.onEventDealWithPkg(event);
+        Log.i(TAG, "onEventDealWithPkg");
+        byte[] pkg = event.getPkgInfo();
+        if (pkg[0] == (byte) 0xa5
+                && pkg[1] == (CCM_STATE_DATA_CNT + 5)
+                && pkg[2] == (byte) 0x06) {
+            byte[] recvData = Util.bytesGetSub(pkg, 3, CCM_STATE_DATA_CNT);
             LogUtil.w(TAG, "" + recvData.length);
 
-            mDirectionX = String.valueOf( Util.byteTowToS16(recvData[CCM_STATE_ANGLE_XH],recvData[CCM_STATE_ANGLE_XL]) );
-            mDirectionY = String.valueOf( Util.byteTowToS16(recvData[CCM_STATE_ANGLE_YH],recvData[CCM_STATE_ANGLE_YL]) );
-            mDirectionZ = String.valueOf( Util.byteTowToS16(recvData[CCM_STATE_ANGLE_ZH],recvData[CCM_STATE_ANGLE_ZL]) );
+            mDirectionX = String.valueOf(Util.byteTowToS16(recvData[CCM_STATE_ANGLE_XH], recvData[CCM_STATE_ANGLE_XL]));
+            mDirectionY = String.valueOf(Util.byteTowToS16(recvData[CCM_STATE_ANGLE_YH], recvData[CCM_STATE_ANGLE_YL]));
+            mDirectionZ = String.valueOf(Util.byteTowToS16(recvData[CCM_STATE_ANGLE_ZH], recvData[CCM_STATE_ANGLE_ZL]));
             LogUtil.i(TAG, "mDirectionX " + mDirectionX + " mDirectionY " + mDirectionY + " mDirectionZ " + mDirectionZ);
 
-            mAccX = String.valueOf( Util.byteTowToS16(recvData[CCM_STATE_ACCL_XH],recvData[CCM_STATE_ACCL_XL]) );
-            mAccY = String.valueOf( Util.byteTowToS16(recvData[CCM_STATE_ACCL_YH],recvData[CCM_STATE_ACCL_YL]) );
-            mAccZ = String.valueOf( Util.byteTowToS16(recvData[CCM_STATE_ACCL_ZH],recvData[CCM_STATE_ACCL_ZL]) );
+            mAccX = String.valueOf(Util.byteTowToS16(recvData[CCM_STATE_ACCL_XH], recvData[CCM_STATE_ACCL_XL]));
+            mAccY = String.valueOf(Util.byteTowToS16(recvData[CCM_STATE_ACCL_YH], recvData[CCM_STATE_ACCL_YL]));
+            mAccZ = String.valueOf(Util.byteTowToS16(recvData[CCM_STATE_ACCL_ZH], recvData[CCM_STATE_ACCL_ZL]));
             LogUtil.i(TAG, "mAccX " + mAccX + " mAccY " + mAccY + " mAccZ " + mAccZ);
 
-            mMagneticX = String.valueOf( Util.byteTowToS16(recvData[CCM_STATE_MAGN_XH],recvData[CCM_STATE_MAGN_XL]) );
-            mMagneticY = String.valueOf( Util.byteTowToS16(recvData[CCM_STATE_MAGN_YH],recvData[CCM_STATE_MAGN_YL]) );
-            mMagneticZ = String.valueOf( Util.byteTowToS16(recvData[CCM_STATE_MAGN_ZH],recvData[CCM_STATE_MAGN_ZL]) );
+            mMagneticX = String.valueOf(Util.byteTowToS16(recvData[CCM_STATE_MAGN_XH], recvData[CCM_STATE_MAGN_XL]));
+            mMagneticY = String.valueOf(Util.byteTowToS16(recvData[CCM_STATE_MAGN_YH], recvData[CCM_STATE_MAGN_YL]));
+            mMagneticZ = String.valueOf(Util.byteTowToS16(recvData[CCM_STATE_MAGN_ZH], recvData[CCM_STATE_MAGN_ZL]));
             LogUtil.i(TAG, "mMagneticX " + mMagneticX + " mMagneticY " + mMagneticY + " mMagneticZ " + mMagneticZ);
 
             mGPSLongitude = String.valueOf(Util.bytesToFloat(recvData[CCM_STATE_GPS_LON3], recvData[CCM_STATE_GPS_LON2], recvData[CCM_STATE_GPS_LON1], recvData[CCM_STATE_GPS_LON0]));
             mGPSLatitude = String.valueOf(Util.bytesToFloat(recvData[CCM_STATE_GPS_LAT3], recvData[CCM_STATE_GPS_LAT2], recvData[CCM_STATE_GPS_LAT1], recvData[CCM_STATE_GPS_LAT0]));
-            mGPSHigh = String.valueOf( Util.byteTowToU16(recvData[CCM_STATE_GPS_ALH],recvData[CCM_STATE_GPS_ALL]) );
+            mGPSHigh = String.valueOf(Util.byteTowToU16(recvData[CCM_STATE_GPS_ALH], recvData[CCM_STATE_GPS_ALL]));
             LogUtil.i(TAG, "mGPSLongitude " + mGPSLongitude + " mGPSLatitude " + mGPSLatitude + " mGPSHigh " + mGPSHigh);
 
             mTemperature = String.valueOf((recvData[CCM_STATE_TEMP]) & 0XFFFF);
@@ -134,15 +138,15 @@ public class TabStatusFragment extends BaseFragment {
             mMotorSpeed4 = String.valueOf((recvData[CCM_STATE_WHEEL_RBH] * 0X0100 | recvData[CCM_STATE_WHEEL_RBL]) & 0XFFFF);
             LogUtil.i(TAG, "mMotorSpeed1 " + mMotorSpeed1 + " mMotorSpeed2 " + mMotorSpeed2 + " mMotorSpeed3 " + mMotorSpeed3 + " mMotorSpeed4 " + mMotorSpeed4);
 
-            mBatteryVoltageValue = String.valueOf( (recvData[CCM_STATE_BATVOL_40V]*0.1f )+40.0f );
-            mStopDetection = String.valueOf( (recvData[CCM_STATE_BURST_STOP]) & 0XFF );
+            mBatteryVoltageValue = String.valueOf((recvData[CCM_STATE_BATVOL_40V] * 0.1f) + 40.0f);
+            mStopDetection = String.valueOf((recvData[CCM_STATE_BURST_STOP]) & 0XFF);
             LogUtil.i(TAG, "mBatteryVoltageValue " + mBatteryVoltageValue + " mStopDetection " + mStopDetection);
 
-            refreshStatus();
+            refreshData();
         }
     }
 
-    private void refreshStatus() {
+    private void refreshData() {
         mList.clear();
         updateStatus();
         initRecyclerView();

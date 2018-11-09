@@ -18,7 +18,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.ButterKnife;
 import patrolcar.bobi.cn.patrolcar.R;
-import patrolcar.bobi.cn.patrolcar.model.CarStatusEvent;
+import patrolcar.bobi.cn.patrolcar.model.DealWithPkgEvent;
 
 public abstract class BaseFragment extends Fragment {
 
@@ -87,7 +87,7 @@ public abstract class BaseFragment extends Fragment {
 
     /** 巡逻车状态 */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventCarStatus(CarStatusEvent event) {
+    public void onEventDealWithPkg(DealWithPkgEvent event) {
     }
 
     @Override
