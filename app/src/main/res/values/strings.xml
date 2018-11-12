@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">蒙蛋</string>
+    <string name="app_name">EE巡逻车</string>
 
     <string name="txt_tab_device">状态</string>
     <string name="txt_tab_control">遥控</string>
@@ -31,4 +31,8 @@
     <string name="cancel">取消</string>
     <string name="set">设置</string>
     <string name="no">否</string>
+    <string name="txt_status_conn">已连接</string>
+    <string name="txt_status_unconn">已断开</string>
+    <string name="txt_status_conn_no">未连接</string>
+    <string name="txt_status_conn_ing">连接中...</string>
 </resources>

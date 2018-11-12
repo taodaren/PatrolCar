@@ -237,6 +237,14 @@ public class MainActivity extends BLEMgrActivity implements BottomNavigationBar.
         selectDialog.show();
     }
 
+    public void connectCar(String mac) {
+        addDeviceByMac(mac);
+    }
+
+    public void disconnectCar(String mac) {
+        removeDeviceByMac(mac);
+    }
+
     private String mMac;
 
     public String getMac() {

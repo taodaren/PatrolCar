@@ -11,8 +11,10 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import patrolcar.bobi.cn.patrolcar.R;
+import patrolcar.bobi.cn.patrolcar.model.DealWithPkgEvent;
 import patrolcar.bobi.cn.patrolcar.util.BleCmdCtrl;
 import patrolcar.bobi.cn.patrolcar.util.SelfDialog;
+import patrolcar.bobi.cn.patrolcar.util.SelfDialogBase;
 import patrolcar.bobi.cn.patrolcar.util.ToastUtil;
 import patrolcar.bobi.cn.patrolcar.view.activity.MainActivity;
 import patrolcar.bobi.cn.patrolcar.view.base.BaseFragment;
@@ -23,6 +25,10 @@ import patrolcar.bobi.cn.patrolcar.view.base.BaseFragment;
 
 public class TabCtrlFragment extends BaseFragment implements View.OnTouchListener {
     private static final String TAG = "TabCtrlFragment";
+    private static final String CONN_NO = "未连接";
+    private static final String CONN_DIS = "已断开";
+    private static final String CONN_OK = "已连接";
+    private static final int MSG_CONN_STATUS     = 1010;
     private static final int DEFAULT_ACC         = 3;
     private static final int HZ_10               = 100;
     private static final int HZ_1                = 1000;
@@ -37,8 +43,11 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
     @BindView(R.id.tv_brake_on)       TextView    tvBrakeOn;
     @BindView(R.id.tv_brake_off)      TextView    tvBrakeOff;
     @BindView(R.id.tv_set_acc)        TextView    tvSetAcc;
+    @BindView(R.id.tv_conn_status)    TextView    tvConnStatus;
 
     private SelfDialog mDialogAcc;
+    private SelfDialogBase mDialogDisconnect;
+    private String mConnStatus;
     private boolean mIsBrake, mIsAuto;
     private int mPwrSwitch, mMotorSwitch, mBrakeSignal, mDriveMotor, mAcc, mTurnTime, mTurnVelocity;
 
@@ -58,6 +67,8 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
 
     @Override
     public void initView(View rootView) {
+        mConnStatus = CONN_NO;
+        mHandler.sendEmptyMessage(MSG_CONN_STATUS);
         // 默认刹车状态
         mIsBrake = true;
         switchSelect(tvBrakeOn, tvBrakeOff);
@@ -76,12 +87,41 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
         getActivity().findViewById(R.id.rl_ctrl_right).setOnTouchListener(this);
     }
 
+    @Override
+    public void onEventDealWithPkg(DealWithPkgEvent event) {
+        super.onEventDealWithPkg(event);
+        Log.i(TAG, "onEventDealWithPkg: " + event);
+        if (event != null) {
+            mConnStatus = CONN_OK;
+        }
+    }
+
+
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
+                case MSG_CONN_STATUS:
+                    switch (mConnStatus) {
+                        case CONN_NO:
+                            // 未连接
+                            connShowStatus(R.string.txt_status_conn_no, R.color.line);
+                            break;
+                        case CONN_DIS:
+                            // 已断开
+                            if (!tvConnStatus.getText().toString().equals(getContext().getResources().getString(R.string.txt_status_conn_ing))) {
+                                connShowStatus(R.string.txt_status_unconn, R.color.colorUnConn);
+                            }
+                            break;
+                        case CONN_OK:
+                            // 已连接
+                            connShowStatus(R.string.txt_status_conn, R.color.colorConn);
+                            break;
+                    }
+                    mHandler.sendEmptyMessageDelayed(MSG_CONN_STATUS, HZ_1);
+                    break;
                 case MSG_UP:
                     if (!mIsAuto) {
                         if (!mIsBrake) {
@@ -165,9 +205,17 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
         }
     };
 
-    @OnClick({R.id.tv_set_acc, R.id.btn_ctrl_stop, R.id.rl_ctrl_up, R.id.rl_ctrl_down, R.id.rl_ctrl_left, R.id.rl_ctrl_right, R.id.tv_dev_on, R.id.tv_dev_off, R.id.tv_brake_on, R.id.tv_brake_off, R.id.tv_motor_on, R.id.tv_motor_off, R.id.tv_robot_ctrl, R.id.tv_auto_cruise})
+    @OnClick({R.id.tv_conn_status, R.id.tv_set_acc, R.id.btn_ctrl_stop, R.id.rl_ctrl_up, R.id.rl_ctrl_down, R.id.rl_ctrl_left, R.id.rl_ctrl_right, R.id.tv_dev_on, R.id.tv_dev_off, R.id.tv_brake_on, R.id.tv_brake_off, R.id.tv_motor_on, R.id.tv_motor_off, R.id.tv_robot_ctrl, R.id.tv_auto_cruise})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.tv_conn_status:
+                if (tvConnStatus.getText().toString().equals("已连接")) {
+                    showDialogByDisconnect();
+                } else if (tvConnStatus.getText().toString().equals("已断开")) {
+                    MainActivity.getAppCtrl().connectCar(MainActivity.getAppCtrl().getMac());
+                    connShowStatus(R.string.txt_status_conn_ing, R.color.line);
+                }
+                break;
             case R.id.btn_ctrl_stop:
                 if (!mIsAuto) {
                     if (!mIsBrake) {
@@ -328,6 +376,11 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
         tvUnSelect.setTextColor(getActivity().getResources().getColor(R.color.colorWhite));
     }
 
+    private void connShowStatus(int txt, int color) {
+        tvConnStatus.setText(getContext().getResources().getString(txt));
+        tvConnStatus.setTextColor(getContext().getResources().getColor(color));
+    }
+
     /** 设置 ACC Dialog */
     private void showDialogByAcc() {
         mDialogAcc = new SelfDialog(getContext());
@@ -359,6 +412,19 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
         });
         mDialogAcc.setNoOnclickListener("取消", () -> mDialogAcc.dismiss());
         mDialogAcc.show();
+    }
+
+    /** 断开汽车连接 */
+    private void showDialogByDisconnect() {
+        mDialogDisconnect = new SelfDialogBase(getContext());
+        mDialogDisconnect.setTitle("确定要断开蓝牙连接？");
+        mDialogDisconnect.setYesOnclickListener("确定", () -> {
+            MainActivity.getAppCtrl().disconnectCar(MainActivity.getAppCtrl().getMac());
+            mConnStatus = CONN_DIS;
+            mDialogDisconnect.dismiss();
+        });
+        mDialogDisconnect.setNoOnclickListener("取消", () -> mDialogDisconnect.dismiss());
+        mDialogDisconnect.show();
     }
 
     @SuppressLint("SetTextI18n")
