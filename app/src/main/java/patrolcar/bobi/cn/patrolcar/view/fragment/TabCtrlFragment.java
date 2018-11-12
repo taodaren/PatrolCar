@@ -39,6 +39,7 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
     @BindView(R.id.tv_set_acc)        TextView    tvSetAcc;
 
     private SelfDialog mDialogAcc;
+    private boolean mIsBrake, mIsAuto;
     private int mPwrSwitch, mMotorSwitch, mBrakeSignal, mDriveMotor, mAcc, mTurnTime, mTurnVelocity;
 
     public static TabCtrlFragment newInstance() {
@@ -57,6 +58,12 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
 
     @Override
     public void initView(View rootView) {
+        // 默认刹车状态
+        mIsBrake = true;
+        switchSelect(tvBrakeOn, tvBrakeOff);
+        // 默认自动巡航
+        mIsAuto = true;
+        switchSelect(tvAutoCruise, tvRobotCtrl);
         setAcc(DEFAULT_ACC);
     }
 
@@ -76,48 +83,78 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
             super.handleMessage(msg);
             switch (msg.what) {
                 case MSG_UP:
-                    Log.i(TAG, "handleMessage up: " + mDriveMotor);
-                    if (mDriveMotor < 0) {
-                        clearZeroByMT(true);
+                    if (!mIsAuto) {
+                        if (!mIsBrake) {
+                            if (mDriveMotor < 0) {
+                                clearZeroByMT(true);
+                            } else {
+                                clearZeroByMT(false);
+                            }
+                            cmdMotorCtrl();
+                            mDriveMotor += mAcc;
+                            if (mDriveMotor >= 100) {
+                                mDriveMotor = 100;
+                            } else if (mDriveMotor <= 15) {
+                                mDriveMotor = 15;
+                            }
+                            mHandler.sendEmptyMessageDelayed(MSG_UP, HZ_10);
+                        } else {
+                            looseningBrakePrompt();
+                        }
                     } else {
-                        clearZeroByMT(false);
+                        modeSelectPrompt();
                     }
-                    cmdMotorCtrl();
-                    mDriveMotor += mAcc;
-                    if (mDriveMotor >= 100) {
-                        mDriveMotor = 100;
-                    } else if (mDriveMotor <= 15) {
-                        mDriveMotor = 15;
-                    }
-                    mHandler.sendEmptyMessageDelayed(MSG_UP, HZ_10);
                     break;
                 case MSG_DOWN:
-                    Log.i(TAG, "handleMessage down: " + mDriveMotor);
-                    if (mDriveMotor > 0) {
-                        clearZeroByMT(true);
+                    if (!mIsAuto) {
+                        if (!mIsBrake) {
+                            if (mDriveMotor > 0) {
+                                clearZeroByMT(true);
+                            } else {
+                                clearZeroByMT(false);
+                            }
+                            cmdMotorCtrl();
+                            mDriveMotor -= mAcc;
+                            if (mDriveMotor <= -100) {
+                                mDriveMotor = -100;
+                            } else if (mDriveMotor >= -15) {
+                                mDriveMotor = -15;
+                            }
+                            mHandler.sendEmptyMessageDelayed(MSG_DOWN, HZ_10);
+                        } else {
+                            looseningBrakePrompt();
+                        }
                     } else {
-                        clearZeroByMT(false);
+                        modeSelectPrompt();
                     }
-                    cmdMotorCtrl();
-                    mDriveMotor -= mAcc;
-                    if (mDriveMotor <= -100) {
-                        mDriveMotor = -100;
-                    } else if (mDriveMotor >= -15) {
-                        mDriveMotor = -15;
-                    }
-                    mHandler.sendEmptyMessageDelayed(MSG_DOWN, HZ_10);
                     break;
                 case MSG_LEFT:
-                    mTurnTime = 20;
-                    mTurnVelocity = -20;
-                    cmdMotorCtrl();
-                    mHandler.sendEmptyMessageDelayed(MSG_LEFT, HZ_10);
+                    if (!mIsAuto) {
+                        if (!mIsBrake) {
+                            mTurnTime = 20;
+                            mTurnVelocity = -20;
+                            cmdMotorCtrl();
+                            mHandler.sendEmptyMessageDelayed(MSG_LEFT, HZ_10);
+                        } else {
+                            looseningBrakePrompt();
+                        }
+                    } else {
+                        modeSelectPrompt();
+                    }
                     break;
                 case MSG_RIGHT:
-                    mTurnTime = 20;
-                    mTurnVelocity = 20;
-                    cmdMotorCtrl();
-                    mHandler.sendEmptyMessageDelayed(MSG_RIGHT, HZ_10);
+                    if (!mIsAuto) {
+                        if (!mIsBrake) {
+                            mTurnTime = 20;
+                            mTurnVelocity = 20;
+                            cmdMotorCtrl();
+                            mHandler.sendEmptyMessageDelayed(MSG_RIGHT, HZ_10);
+                        } else {
+                            looseningBrakePrompt();
+                        }
+                    } else {
+                        modeSelectPrompt();
+                    }
                     break;
                 case MSG_LOOSEN_DRIVE:
                     clearZeroByMT(false);
@@ -132,11 +169,19 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_ctrl_stop:
-                mHandler.removeMessages(MSG_UP);
-                mHandler.removeMessages(MSG_DOWN);
-                mHandler.removeMessages(MSG_LOOSEN_DRIVE);
-                clearZeroByMT(true);
-                cmdMotorCtrl();
+                if (!mIsAuto) {
+                    if (!mIsBrake) {
+                        mHandler.removeMessages(MSG_UP);
+                        mHandler.removeMessages(MSG_DOWN);
+                        mHandler.removeMessages(MSG_LOOSEN_DRIVE);
+                        clearZeroByMT(true);
+                        cmdMotorCtrl();
+                    } else {
+                        looseningBrakePrompt();
+                    }
+                } else {
+                    modeSelectPrompt();
+                }
                 break;
             case R.id.tv_dev_on:
                 clearZeroByMT(true);
@@ -149,16 +194,26 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
                 cmdMotorCtrl();
                 break;
             case R.id.tv_brake_on:
-                switchSelect(tvBrakeOn, tvBrakeOff);
-                clearZeroByMT(true);
-                mBrakeSignal = 1;
-                cmdMotorCtrl();
+                if (!mIsAuto) {
+                    mIsBrake = true;
+                    switchSelect(tvBrakeOn, tvBrakeOff);
+                    clearZeroByMT(true);
+                    mBrakeSignal = 1;
+                    cmdMotorCtrl();
+                } else {
+                    modeSelectPrompt();
+                }
                 break;
             case R.id.tv_brake_off:
-                switchSelect(tvBrakeOff, tvBrakeOn);
-                clearZeroByMT(true);
-                mBrakeSignal = 2;
-                cmdMotorCtrl();
+                if (!mIsAuto) {
+                    mIsBrake = false;
+                    switchSelect(tvBrakeOff, tvBrakeOn);
+                    clearZeroByMT(true);
+                    mBrakeSignal = 2;
+                    cmdMotorCtrl();
+                } else {
+                    modeSelectPrompt();
+                }
                 break;
             case R.id.tv_motor_on:
                 clearZeroByMT(true);
@@ -171,10 +226,12 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
                 cmdMotorCtrl();
                 break;
             case R.id.tv_robot_ctrl:
+                mIsAuto = false;
                 switchSelect(tvRobotCtrl, tvAutoCruise);
                 cmdAppToPc(0x01, 0);
                 break;
             case R.id.tv_auto_cruise:
+                mIsAuto = true;
                 switchSelect(tvAutoCruise, tvRobotCtrl);
                 cmdAppToPc(0x02, 0);
                 break;
@@ -308,6 +365,14 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
     private void setAcc(int acc) {
         mAcc = acc;
         tvSetAcc.setText(getActivity().getResources().getString(R.string.txt_edit_acc) + acc);
+    }
+
+    private void modeSelectPrompt() {
+        ToastUtil.showShort("非机器人遥控模式无法操作，请切换机器人模式");
+    }
+
+    private void looseningBrakePrompt() {
+        ToastUtil.showShort("请松开刹车");
     }
 
 }

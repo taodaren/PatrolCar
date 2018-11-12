@@ -217,10 +217,10 @@
             android:layout_width="68dp"
             android:layout_height="48dp"
             android:layout_margin="8dp"
-            android:background="@drawable/shape_bg_select"
+            android:background="@drawable/shape_bg_unselect"
             android:gravity="center"
             android:text="@string/txt_brake_start"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/colorWhite"
             android:textSize="16sp" />
 
         <TextView
