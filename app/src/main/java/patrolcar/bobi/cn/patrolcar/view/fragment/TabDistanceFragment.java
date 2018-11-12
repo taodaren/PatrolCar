@@ -17,6 +17,7 @@ import patrolcar.bobi.cn.patrolcar.model.DisValsDataType;
 import patrolcar.bobi.cn.patrolcar.model.DistanceBean;
 import patrolcar.bobi.cn.patrolcar.util.BleCmdCtrl;
 import patrolcar.bobi.cn.patrolcar.util.LogUtil;
+import patrolcar.bobi.cn.patrolcar.view.activity.MainActivity;
 import patrolcar.bobi.cn.patrolcar.view.adapter.TabDistanceAdapter;
 import patrolcar.bobi.cn.patrolcar.view.base.BaseFragment;
 
@@ -28,7 +29,6 @@ import static patrolcar.bobi.cn.patrolcar.model.DisValsDataType.DISTANCE_TYPE_MA
 
 public class TabDistanceFragment extends BaseFragment {
     private static final String TAG = "TabDistanceFragment";
-    private static final String MAC = "F7:4D:B8:21:A5:35";
     private static final int WHAT_DIS_REPLY = 1;
 
     @BindView(R.id.rv_distance)    RecyclerView rvDistance;
@@ -42,8 +42,8 @@ public class TabDistanceFragment extends BaseFragment {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 1) {
-                BleCmdCtrl.sendCmdDisReply(MAC, 0x07);
-                mHandler.sendEmptyMessageDelayed(WHAT_DIS_REPLY, 1000);
+                BleCmdCtrl.sendCmdDisReply(MainActivity.getAppCtrl().getMac(), 0x07);
+                mHandler.sendEmptyMessageDelayed(WHAT_DIS_REPLY, 2000);
             }
         }
     };
@@ -118,10 +118,10 @@ public class TabDistanceFragment extends BaseFragment {
                 int valId = (i / 2) * 3;
                 if (0 != (i & 0X01)) {
                     // 奇数
-                    type.disVals[idCanPushData].disVals[i] = (type.disVals[idCanPushData].disData[valId + 1] & 0X0F) * 0X0100 + type.disVals[idCanPushData].disData[valId + 2];
+                    type.disVals[idCanPushData].disVals[i] = (type.disVals[idCanPushData].disData[valId + 1] & 0X0F) * 0X0100 + (((int) (type.disVals[idCanPushData].disData[valId + 2])) & 0X0FF);
                 } else {
                     // 偶数
-                    type.disVals[idCanPushData].disVals[i] = type.disVals[idCanPushData].disData[valId] * 0X0010 + (type.disVals[idCanPushData].disData[valId + 1] >> 4);
+                    type.disVals[idCanPushData].disVals[i] = (((int) (type.disVals[idCanPushData].disData[valId])) & 0X0FF) * 0X0010 + (type.disVals[idCanPushData].disData[valId + 1] >> 4);
                 }
             }
             updateDis(type.disVals[idCanPushData]);

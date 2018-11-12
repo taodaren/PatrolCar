@@ -2,6 +2,7 @@ package patrolcar.bobi.cn.patrolcar.util;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -15,14 +16,12 @@ import patrolcar.bobi.cn.patrolcar.model.DealWithPkgEvent;
 
 public class BleDevProtocol {
     private final static String TAG = "BleDevProtocol";
-    private final static int MAX_PKG_LEN = 0x80;
-    private final static int PKG_LEN_STATUS = 0x2e;
-    private final static int CMD_GET_STATUS = 1;
+    private final static int PKG_LEN_MAX = 200;
 
     private final static int HEADER_LEN = 7;
     private int mPkgLen;
     private int nRevCnt;
-    private byte[] mPkgStatus = new byte[PKG_LEN_STATUS];
+    private byte[] mPkg = new byte[PKG_LEN_MAX];
 
     /** 接收 */
     public void bleReceive(byte[] data) {
@@ -35,19 +34,19 @@ public class BleDevProtocol {
     private void onByte(byte b) {
         if (nRevCnt == 0) {
             if (b == (byte) 0XA5) {
-                mPkgStatus[0] = b;
+                mPkg[0] = b;
                 nRevCnt = 1;
             }
         } else if (nRevCnt == 1) {
             mPkgLen = b;
-            mPkgStatus[nRevCnt] = b;
+            mPkg[nRevCnt] = b;
             nRevCnt = 2;
         } else {
-            mPkgStatus[nRevCnt] = b;
+            mPkg[nRevCnt] = b;
             nRevCnt++;
             if (nRevCnt >= mPkgLen) {
                 nRevCnt = 0;
-                EventBus.getDefault().post(new DealWithPkgEvent(mPkgStatus));
+                EventBus.getDefault().post(new DealWithPkgEvent(mPkg));
             }
         }
     }

@@ -1,7 +1,5 @@
 package patrolcar.bobi.cn.patrolcar.util;
 
-import android.util.Log;
-
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -113,17 +111,18 @@ public class Util {
         return 0f;
     }
 
-    public static int byteTowToU16(byte valH,byte valL){
-        int val = (int)(valH);
+    public static int byteTowToU16(byte valH, byte valL) {
+        int val = (int) (valH);
         val &= 0X0FF;
         val <<= 8;
-        val  |= ((int)(valL))&0X0FF;
+        val |= ((int) (valL)) & 0X0FF;
         return val;
     }
-    public static int byteTowToS16(byte valH,byte valL){
-        int val = (int)(valH);
+
+    public static int byteTowToS16(byte valH, byte valL) {
+        int val = (int) (valH);
         val <<= 8;
-        val  |= ((int)(valL))&0X0FF;
+        val |= ((int) (valL)) & 0X0FF;
         return val;
     }
 

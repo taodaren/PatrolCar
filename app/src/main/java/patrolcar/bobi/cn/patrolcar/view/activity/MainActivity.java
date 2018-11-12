@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.ArrayMap;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,6 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import patrolcar.bobi.cn.patrolcar.R;
 import patrolcar.bobi.cn.patrolcar.util.BleDevProtocol;
@@ -230,12 +228,23 @@ public class MainActivity extends BLEMgrActivity implements BottomNavigationBar.
                     for (int i = 0; i < mListByFoundMac.size(); i++) {
                         if (selected_array.get(i)) {
                             addDeviceByMac(mListByFoundMac.get(i));
+                            setMac(mListByFoundMac.get(i));
                         }
                     }
                     mAdapterByFoundMac = null;
                 })
                 .create();
         selectDialog.show();
+    }
+
+    private String mMac;
+
+    public String getMac() {
+        return mMac;
+    }
+
+    public void setMac(String mac) {
+        this.mMac = mac;
     }
 
 }

@@ -11,6 +11,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import patrolcar.bobi.cn.patrolcar.R;
 import patrolcar.bobi.cn.patrolcar.util.BleCmdCtrl;
+import patrolcar.bobi.cn.patrolcar.view.activity.MainActivity;
 import patrolcar.bobi.cn.patrolcar.view.base.BaseFragment;
 
 /**
@@ -19,7 +20,6 @@ import patrolcar.bobi.cn.patrolcar.view.base.BaseFragment;
 
 public class TabCtrlFragment extends BaseFragment implements View.OnTouchListener {
     private static final String TAG = "TabCtrlFragment";
-    private static final String MAC = "F7:4D:B8:21:A5:35";
     private static final int HZ           = 100;
     private static final int MSG_UP       = 1;
     private static final int MSG_DOWN     = 2;
@@ -194,12 +194,13 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
 
     /** 电机控制命令 */
     private void cmdMotorCtrl() {
-        BleCmdCtrl.sendCmdMotorCtrl(MAC, mPwrSwitch, mMotorSwitch, mBrakeSignal, mDriveMotor, mAcc, mTurnMotorTime, mTurnMotorSpeed);
+        BleCmdCtrl.sendCmdMotorCtrl(MainActivity.getAppCtrl().getMac(),
+                mPwrSwitch, mMotorSwitch, mBrakeSignal, mDriveMotor, mAcc, mTurnMotorTime, mTurnMotorSpeed);
     }
 
     /** APP 发送命令给工控机 */
     private void cmdAppToPc(int cmd, int autoCruType) {
-        BleCmdCtrl.sendCmdAppToPC(MAC, cmd, autoCruType);
+        BleCmdCtrl.sendCmdAppToPC(MainActivity.getAppCtrl().getMac(), cmd, autoCruType);
     }
 
     /**

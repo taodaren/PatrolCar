@@ -34,6 +34,7 @@ import static patrolcar.bobi.cn.patrolcar.app.AppConstant.CCM_STATE_BURST_STOP;
 import static patrolcar.bobi.cn.patrolcar.app.AppConstant.CCM_STATE_DATA_CNT;
 import static patrolcar.bobi.cn.patrolcar.app.AppConstant.CCM_STATE_GPS_ALH;
 import static patrolcar.bobi.cn.patrolcar.app.AppConstant.CCM_STATE_GPS_ALL;
+import static patrolcar.bobi.cn.patrolcar.app.AppConstant.CCM_STATE_GPS_HDOP;
 import static patrolcar.bobi.cn.patrolcar.app.AppConstant.CCM_STATE_GPS_LAT0;
 import static patrolcar.bobi.cn.patrolcar.app.AppConstant.CCM_STATE_GPS_LAT1;
 import static patrolcar.bobi.cn.patrolcar.app.AppConstant.CCM_STATE_GPS_LAT2;
@@ -74,7 +75,7 @@ public class TabStatusFragment extends BaseFragment {
     private String mDirectionX, mDirectionY, mDirectionZ;
     private String mMagneticX, mMagneticY, mMagneticZ;
     private String mTemperature, mHumidity;
-    private String mGPSLongitude, mGPSLatitude, mGPSHigh;
+    private String mGPSLongitude, mGPSLatitude, mGPSHigh, mGPSHdop;
     private String mTurnDirection;
     private String mMotorSpeed1, mMotorSpeed2, mMotorSpeed3, mMotorSpeed4;
     private String mBatteryVoltageValue, mStopDetection;
@@ -101,6 +102,7 @@ public class TabStatusFragment extends BaseFragment {
         super.onEventDealWithPkg(event);
         Log.i(TAG, "onEventDealWithPkg");
         byte[] pkg = event.getPkgInfo();
+        Log.i(TAG, "event pkg len" + pkg.length);
         if (pkg[0] == (byte) 0xa5
                 && pkg[1] == (CCM_STATE_DATA_CNT + 5)
                 && pkg[2] == (byte) 0x06) {
@@ -125,11 +127,12 @@ public class TabStatusFragment extends BaseFragment {
             mGPSLongitude = String.valueOf(Util.bytesToFloat(recvData[CCM_STATE_GPS_LON3], recvData[CCM_STATE_GPS_LON2], recvData[CCM_STATE_GPS_LON1], recvData[CCM_STATE_GPS_LON0]));
             mGPSLatitude = String.valueOf(Util.bytesToFloat(recvData[CCM_STATE_GPS_LAT3], recvData[CCM_STATE_GPS_LAT2], recvData[CCM_STATE_GPS_LAT1], recvData[CCM_STATE_GPS_LAT0]));
             mGPSHigh = String.valueOf(Util.byteTowToU16(recvData[CCM_STATE_GPS_ALH], recvData[CCM_STATE_GPS_ALL]));
-            LogUtil.i(TAG, "mGPSLongitude " + mGPSLongitude + " mGPSLatitude " + mGPSLatitude + " mGPSHigh " + mGPSHigh);
+            mGPSHdop = String.valueOf((recvData[CCM_STATE_GPS_HDOP]) & 0XFFFF);
+            LogUtil.i(TAG, "mGPSLongitude " + mGPSLongitude + " mGPSLatitude " + mGPSLatitude + " mGPSHigh " + mGPSHigh + " mGPSHdop " + mGPSHdop);
 
             mTemperature = String.valueOf((recvData[CCM_STATE_TEMP]) & 0XFFFF);
             mHumidity = String.valueOf((recvData[CCM_STATE_HUMI]) & 0XFFFF);
-            mTurnDirection = String.valueOf((recvData[CCM_STATE_TURN_DIR]) & 0XFFFF);
+            mTurnDirection = String.valueOf(recvData[CCM_STATE_TURN_DIR]);
             LogUtil.i(TAG, "mTemperature " + mTemperature + " mHumidity " + mHumidity + " mTurnDirection " + mTurnDirection);
 
             mMotorSpeed1 = String.valueOf((recvData[CCM_STATE_WHEEL_LFH] * 0X0100 | recvData[CCM_STATE_WHEEL_LFL]) & 0XFFFF);
@@ -174,6 +177,7 @@ public class TabStatusFragment extends BaseFragment {
         mList.add(new StatusBean("GPS经度", mGPSLongitude, "°"));
         mList.add(new StatusBean("GPS纬度", mGPSLatitude, "°"));
         mList.add(new StatusBean("GPS高度", mGPSHigh, "m"));
+        mList.add(new StatusBean("GPS精度", mGPSHdop, "cep"));
         mList.add(new StatusBean("转向方向", mTurnDirection, "°"));
         mList.add(new StatusBean("电机速度1", mMotorSpeed1, "个"));
         mList.add(new StatusBean("电机速度2", mMotorSpeed2, "个"));
@@ -198,6 +202,7 @@ public class TabStatusFragment extends BaseFragment {
         mGPSLongitude = STATUS_NOTHING;
         mGPSLatitude = STATUS_NOTHING;
         mGPSHigh = STATUS_NOTHING;
+        mGPSHdop = STATUS_NOTHING;
         mTurnDirection = STATUS_NOTHING;
         mMotorSpeed1 = STATUS_NOTHING;
         mMotorSpeed2 = STATUS_NOTHING;
