@@ -22,6 +22,7 @@
     <string name="txt_distance_dis">距离</string>
     <string name="txt_null_data">-</string>
 
+    <string name="txt_edit_acc">加速度丨</string>
 
     <string name="message_permission_rationale">程序只有满足下列权限才能正常操作:\n\n%1$s</string>
     <string name="message_permission_always_failed">程序需要下列权限, 请在设置中打开:\n\n%1$s</string>

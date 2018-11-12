@@ -3,6 +3,7 @@ package patrolcar.bobi.cn.patrolcar.view.fragment;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -11,6 +12,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import patrolcar.bobi.cn.patrolcar.R;
 import patrolcar.bobi.cn.patrolcar.util.BleCmdCtrl;
+import patrolcar.bobi.cn.patrolcar.util.SelfDialog;
+import patrolcar.bobi.cn.patrolcar.util.ToastUtil;
 import patrolcar.bobi.cn.patrolcar.view.activity.MainActivity;
 import patrolcar.bobi.cn.patrolcar.view.base.BaseFragment;
 
@@ -20,18 +23,23 @@ import patrolcar.bobi.cn.patrolcar.view.base.BaseFragment;
 
 public class TabCtrlFragment extends BaseFragment implements View.OnTouchListener {
     private static final String TAG = "TabCtrlFragment";
-    private static final int HZ           = 100;
-    private static final int MSG_UP       = 1;
-    private static final int MSG_DOWN     = 2;
-    private static final int MSG_LEFT     = 3;
-    private static final int MSG_RIGHT    = 4;
+    private static final int DEFAULT_ACC         = 3;
+    private static final int HZ_10               = 100;
+    private static final int HZ_1                = 1000;
+    private static final int MSG_UP              = 1;
+    private static final int MSG_DOWN            = 2;
+    private static final int MSG_LEFT            = 3;
+    private static final int MSG_RIGHT           = 4;
+    private static final int MSG_LOOSEN_DRIVE    = 5;
 
     @BindView(R.id.tv_auto_cruise)    TextView    tvAutoCruise;
     @BindView(R.id.tv_robot_ctrl)     TextView    tvRobotCtrl;
     @BindView(R.id.tv_brake_on)       TextView    tvBrakeOn;
     @BindView(R.id.tv_brake_off)      TextView    tvBrakeOff;
+    @BindView(R.id.tv_set_acc)        TextView    tvSetAcc;
 
-    private int mPwrSwitch, mMotorSwitch, mBrakeSignal, mDriveMotor, mAcc, mTurnMotorTime, mTurnMotorSpeed;
+    private SelfDialog mDialogAcc;
+    private int mPwrSwitch, mMotorSwitch, mBrakeSignal, mDriveMotor, mAcc, mTurnTime, mTurnVelocity;
 
     public static TabCtrlFragment newInstance() {
         return new TabCtrlFragment();
@@ -45,6 +53,11 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
     @Override
     public void initToolbar() {
         setToolbar(R.id.main_toolbar, R.string.txt_tab_control, View.VISIBLE);
+    }
+
+    @Override
+    public void initView(View rootView) {
+        setAcc(DEFAULT_ACC);
     }
 
     @Override
@@ -63,43 +76,65 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
             super.handleMessage(msg);
             switch (msg.what) {
                 case MSG_UP:
-                    mAcc = 5;
+                    Log.i(TAG, "handleMessage up: " + mDriveMotor);
+                    if (mDriveMotor < 0) {
+                        clearZeroByMT(true);
+                    } else {
+                        clearZeroByMT(false);
+                    }
                     cmdMotorCtrl();
                     mDriveMotor += mAcc;
                     if (mDriveMotor >= 100) {
                         mDriveMotor = 100;
+                    } else if (mDriveMotor <= 15) {
+                        mDriveMotor = 15;
                     }
-                    mHandler.sendEmptyMessageDelayed(MSG_UP, HZ);
+                    mHandler.sendEmptyMessageDelayed(MSG_UP, HZ_10);
                     break;
                 case MSG_DOWN:
-                    mAcc = 5;
+                    Log.i(TAG, "handleMessage down: " + mDriveMotor);
+                    if (mDriveMotor > 0) {
+                        clearZeroByMT(true);
+                    } else {
+                        clearZeroByMT(false);
+                    }
                     cmdMotorCtrl();
                     mDriveMotor -= mAcc;
                     if (mDriveMotor <= -100) {
                         mDriveMotor = -100;
+                    } else if (mDriveMotor >= -15) {
+                        mDriveMotor = -15;
                     }
-                    mHandler.sendEmptyMessageDelayed(MSG_DOWN, HZ);
+                    mHandler.sendEmptyMessageDelayed(MSG_DOWN, HZ_10);
                     break;
                 case MSG_LEFT:
-                    mTurnMotorTime = 20;
-                    mTurnMotorSpeed = -20;
+                    mTurnTime = 20;
+                    mTurnVelocity = -20;
                     cmdMotorCtrl();
-                    mHandler.sendEmptyMessageDelayed(MSG_LEFT, HZ);
+                    mHandler.sendEmptyMessageDelayed(MSG_LEFT, HZ_10);
                     break;
                 case MSG_RIGHT:
-                    mTurnMotorTime = 20;
-                    mTurnMotorSpeed = 20;
+                    mTurnTime = 20;
+                    mTurnVelocity = 20;
                     cmdMotorCtrl();
-                    mHandler.sendEmptyMessageDelayed(MSG_RIGHT, HZ);
+                    mHandler.sendEmptyMessageDelayed(MSG_RIGHT, HZ_10);
+                    break;
+                case MSG_LOOSEN_DRIVE:
+                    clearZeroByMT(false);
+                    cmdMotorCtrl();
+                    mHandler.sendEmptyMessageDelayed(MSG_LOOSEN_DRIVE, HZ_1);
                     break;
             }
         }
     };
 
-    @OnClick({R.id.btn_ctrl_stop, R.id.rl_ctrl_up, R.id.rl_ctrl_down, R.id.rl_ctrl_left, R.id.rl_ctrl_right, R.id.tv_dev_on, R.id.tv_dev_off, R.id.tv_brake_on, R.id.tv_brake_off, R.id.tv_motor_on, R.id.tv_motor_off, R.id.tv_robot_ctrl, R.id.tv_auto_cruise})
+    @OnClick({R.id.tv_set_acc, R.id.btn_ctrl_stop, R.id.rl_ctrl_up, R.id.rl_ctrl_down, R.id.rl_ctrl_left, R.id.rl_ctrl_right, R.id.tv_dev_on, R.id.tv_dev_off, R.id.tv_brake_on, R.id.tv_brake_off, R.id.tv_motor_on, R.id.tv_motor_off, R.id.tv_robot_ctrl, R.id.tv_auto_cruise})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_ctrl_stop:
+                mHandler.removeMessages(MSG_UP);
+                mHandler.removeMessages(MSG_DOWN);
+                mHandler.removeMessages(MSG_LOOSEN_DRIVE);
                 clearZeroByMT(true);
                 cmdMotorCtrl();
                 break;
@@ -143,6 +178,9 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
                 switchSelect(tvAutoCruise, tvRobotCtrl);
                 cmdAppToPc(0x02, 0);
                 break;
+            case R.id.tv_set_acc:
+                showDialogByAcc();
+                break;
         }
     }
 
@@ -172,9 +210,15 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
                 switch (v.getId()) {
                     case R.id.rl_ctrl_up:
                         mHandler.removeMessages(MSG_UP);
+                        mHandler.removeMessages(MSG_DOWN);
+                        clearZeroByMT(false);
+                        mHandler.sendEmptyMessage(MSG_LOOSEN_DRIVE);
                         break;
                     case R.id.rl_ctrl_down:
+                        mHandler.removeMessages(MSG_UP);
                         mHandler.removeMessages(MSG_DOWN);
+                        clearZeroByMT(false);
+                        mHandler.sendEmptyMessage(MSG_LOOSEN_DRIVE);
                         break;
                     case R.id.rl_ctrl_left:
                         mHandler.removeMessages(MSG_LEFT);
@@ -194,8 +238,9 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
 
     /** 电机控制命令 */
     private void cmdMotorCtrl() {
+        Log.i(TAG, "acc " + mAcc + " DriveMotor " + mDriveMotor);
         BleCmdCtrl.sendCmdMotorCtrl(MainActivity.getAppCtrl().getMac(),
-                mPwrSwitch, mMotorSwitch, mBrakeSignal, mDriveMotor, mAcc, mTurnMotorTime, mTurnMotorSpeed);
+                mPwrSwitch, mMotorSwitch, mBrakeSignal, mDriveMotor, mAcc, mTurnTime, mTurnVelocity);
     }
 
     /** APP 发送命令给工控机 */
@@ -215,9 +260,8 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
         mPwrSwitch = 0;
         mMotorSwitch = 0;
         mBrakeSignal = 0;
-        mAcc = 0;
-        mTurnMotorTime = 0;
-        mTurnMotorSpeed = 0;
+        mTurnTime = 0;
+        mTurnVelocity = 0;
     }
 
     private void switchSelect(TextView tvSelect, TextView tvUnSelect) {
@@ -225,6 +269,45 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
         tvSelect.setTextColor(getActivity().getResources().getColor(R.color.colorPrimary));
         tvUnSelect.setBackground(getActivity().getDrawable(R.drawable.shape_bg_unselect));
         tvUnSelect.setTextColor(getActivity().getResources().getColor(R.color.colorWhite));
+    }
+
+    /** 设置 ACC Dialog */
+    private void showDialogByAcc() {
+        mDialogAcc = new SelfDialog(getContext());
+        mDialogAcc.setTitle("设置驱动电机加速度");
+        mDialogAcc.setMessage("加速度取值范围1~10");
+        mDialogAcc.setYesOnclickListener("确定", () -> {
+            if (!(mDialogAcc.getEditTextStr().equals(""))) {
+                try {
+                    final int niAcc = Integer.parseInt(mDialogAcc.getEditTextStr());
+                    if (!(niAcc >= 0 && niAcc <= 10)) {
+                        // 如果输入的加速度不在 1~10 之间，提示用户
+                        ToastUtil.showShort("设置值超出范围，请重新设置");
+                        mDialogAcc.dismiss();
+                    } else {
+                        // 更新 DMX 地址
+                        setAcc(niAcc);
+                        mDialogAcc.dismiss();
+                    }
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    // 还有不按规矩出牌的？有！
+                    ToastUtil.showShort("请设置正确的加速度");
+                    mDialogAcc.dismiss();
+                }
+            } else {
+                ToastUtil.showShort("加速度未更新");
+                mDialogAcc.dismiss();
+            }
+        });
+        mDialogAcc.setNoOnclickListener("取消", () -> mDialogAcc.dismiss());
+        mDialogAcc.show();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setAcc(int acc) {
+        mAcc = acc;
+        tvSetAcc.setText(getActivity().getResources().getString(R.string.txt_edit_acc) + acc);
     }
 
 }

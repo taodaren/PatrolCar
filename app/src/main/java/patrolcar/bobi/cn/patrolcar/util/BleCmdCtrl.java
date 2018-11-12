@@ -21,16 +21,15 @@ public class BleCmdCtrl {
     private static final int CRC_APP_TO_PC           = 0X6EC5;        // APP 发送命令给工控机
     private static final int CRC_DIS_REPLY           = 0X85FC;        // 等待距离回复
 
-    private static byte[] pkgMotorCtrl(int pwrSwitch, int motorSwitch, int brakeSignal, int driveMotor,
-                                       int aDriveMotor, int turnMotorTime, int turnMotorSpeed) {
+    private static byte[] pkgMotorCtrl(int pwrSwitch, int motorSwitch, int brakeSignal, int driveMotor, int acc, int turnTime, int turnVelocity) {
         byte[] motorCtrl = new byte[7];
         motorCtrl[0] = (byte) (pwrSwitch & 0XFF);
         motorCtrl[1] = (byte) (motorSwitch & 0XFF);
         motorCtrl[2] = (byte) (brakeSignal & 0XFF);
         motorCtrl[3] = (byte) (driveMotor & 0XFF);
-        motorCtrl[4] = (byte) (aDriveMotor & 0XFF);
-        motorCtrl[5] = (byte) (turnMotorTime & 0XFF);
-        motorCtrl[6] = (byte) (turnMotorSpeed & 0XFF);
+        motorCtrl[4] = (byte) (acc & 0XFF);
+        motorCtrl[5] = (byte) (turnTime & 0XFF);
+        motorCtrl[6] = (byte) (turnVelocity & 0XFF);
         return motorCtrl;
     }
 
@@ -57,17 +56,17 @@ public class BleCmdCtrl {
     /**
      * 电机控制命令【0X02】
      *
-     * @param mac            设备 MAC 地址
-     * @param pwrSwitch      电源总开关
-     * @param motorSwitch    电机总开关
-     * @param brakeSignal    刹车信号
-     * @param driveMotor     驱动电机
-     * @param acc            加速度
-     * @param turnMotorTime  转向电机时间
-     * @param turnMotorSpeed 转向电机速度
+     * @param mac          设备 MAC 地址
+     * @param pwrSwitch    电源总开关
+     * @param motorSwitch  电机总开关
+     * @param brakeSignal  刹车信号
+     * @param driveMotor   驱动电机
+     * @param acc          加速度
+     * @param turnTime     转向电机时间
+     * @param turnVelocity 转向电机速度
      */
-    public static void sendCmdMotorCtrl(String mac, int pwrSwitch, int motorSwitch, int brakeSignal, int driveMotor, int acc, int turnMotorTime, int turnMotorSpeed) {
-        byte[] bytes = pkgMotorCtrl(pwrSwitch, motorSwitch, brakeSignal, driveMotor, acc, turnMotorTime, turnMotorSpeed);
+    public static void sendCmdMotorCtrl(String mac, int pwrSwitch, int motorSwitch, int brakeSignal, int driveMotor, int acc, int turnTime, int turnVelocity) {
+        byte[] bytes = pkgMotorCtrl(pwrSwitch, motorSwitch, brakeSignal, driveMotor, acc, turnTime, turnVelocity);
         MainActivity.getAppCtrl().sendCmd(mac, BleDevProtocol.cmdPkg(SEND_HEADER, CMD_MOTOR_CTRL, bytes, CRC_MOTOR_CTRL));
     }
 
