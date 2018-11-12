@@ -205,7 +205,7 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
         }
     };
 
-    @OnClick({R.id.tv_conn_status, R.id.tv_set_acc, R.id.btn_ctrl_stop, R.id.rl_ctrl_up, R.id.rl_ctrl_down, R.id.rl_ctrl_left, R.id.rl_ctrl_right, R.id.tv_dev_on, R.id.tv_dev_off, R.id.tv_brake_on, R.id.tv_brake_off, R.id.tv_motor_on, R.id.tv_motor_off, R.id.tv_robot_ctrl, R.id.tv_auto_cruise})
+    @OnClick({R.id.tv_clear_gps, R.id.tv_conn_status, R.id.tv_set_acc, R.id.btn_ctrl_stop, R.id.rl_ctrl_up, R.id.rl_ctrl_down, R.id.rl_ctrl_left, R.id.rl_ctrl_right, R.id.tv_dev_on, R.id.tv_dev_off, R.id.tv_brake_on, R.id.tv_brake_off, R.id.tv_motor_on, R.id.tv_motor_off, R.id.tv_robot_ctrl, R.id.tv_auto_cruise})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_conn_status:
@@ -282,6 +282,17 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
                 mIsAuto = true;
                 switchSelect(tvAutoCruise, tvRobotCtrl);
                 cmdAppToPc(0x02, 0);
+                break;
+            case R.id.tv_clear_gps:
+                if (!mIsAuto) {
+                    if (!mIsBrake) {
+                        cmdAppToPc(0x04, 0);
+                    } else {
+                        looseningBrakePrompt();
+                    }
+                } else {
+                    modeSelectPrompt();
+                }
                 break;
             case R.id.tv_set_acc:
                 showDialogByAcc();

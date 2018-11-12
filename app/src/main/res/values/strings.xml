@@ -14,6 +14,7 @@
     <string name="txt_stop_device">STOP</string>
     <string name="txt_auto_cruise">自动巡航</string>
     <string name="txt_robot_ctrl">机器人遥控</string>
+    <string name="txt_clear_gps">清空GPS</string>
 
     <string name="txt_status_name">状态名</string>
     <string name="txt_status_value">状态值</string>

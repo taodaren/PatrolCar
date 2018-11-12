@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_tab_ctrl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
@@ -54,7 +53,7 @@
 
         <TextView
             android:id="@+id/tv_auto_cruise"
-            android:layout_width="100dp"
+            android:layout_width="90dp"
             android:layout_height="48dp"
             android:layout_margin="8dp"
             android:background="@drawable/shape_bg_unselect"
@@ -65,12 +64,23 @@
 
         <TextView
             android:id="@+id/tv_robot_ctrl"
-            android:layout_width="100dp"
+            android:layout_width="90dp"
             android:layout_height="48dp"
             android:layout_margin="8dp"
             android:background="@drawable/shape_bg_unselect"
             android:gravity="center"
             android:text="@string/txt_robot_ctrl"
+            android:textColor="@color/colorWhite"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_clear_gps"
+            android:layout_width="90dp"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/shape_bg_unselect"
+            android:gravity="center"
+            android:text="@string/txt_clear_gps"
             android:textColor="@color/colorWhite"
             android:textSize="16sp" />
     </LinearLayout>

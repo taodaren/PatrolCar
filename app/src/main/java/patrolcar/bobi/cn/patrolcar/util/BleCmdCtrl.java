@@ -39,6 +39,12 @@ public class BleCmdCtrl {
         return robotCtrl;
     }
 
+    private static byte[] pkgClearGPS(int cmdRobot) {
+        byte[] robotCtrl = new byte[1];
+        robotCtrl[0] = (byte) (cmdRobot & 0XFF);
+        return robotCtrl;
+    }
+
     private static byte[] pkgAutoCruise(int cmdAuto, int cruType) {
         byte[] autoCruise = new byte[3];
         autoCruise[0] = (byte) (cmdAuto & 0XFF);
@@ -74,7 +80,7 @@ public class BleCmdCtrl {
      * APP 发送命令给工控机【0X09】
      *
      * @param mac         设备 MAC 地址
-     * @param cmd         命令类型 0x01-机器人遥控；0x02-自动巡检
+     * @param cmd         命令类型 0x01-机器人遥控；0x02-自动巡检；0x04-清空GPS
      * @param autoCruType 巡检类型 0-按照一条线路巡检一次；1-按照线路循环执行；2-按照现有内部地图，随机巡检
      */
     public static void sendCmdAppToPC(String mac, int cmd, int autoCruType) {
@@ -84,6 +90,9 @@ public class BleCmdCtrl {
                 break;
             case (byte) 0x02:
                 MainActivity.getAppCtrl().sendCmd(mac, BleDevProtocol.cmdPkg(SEND_HEADER, CMD_APP_TO_PC, pkgAutoCruise(cmd, autoCruType), CRC_APP_TO_PC));
+                break;
+            case (byte) 0x04:
+                MainActivity.getAppCtrl().sendCmd(mac, BleDevProtocol.cmdPkg(SEND_HEADER, CMD_APP_TO_PC, pkgClearGPS(cmd), CRC_APP_TO_PC));
                 break;
         }
     }
