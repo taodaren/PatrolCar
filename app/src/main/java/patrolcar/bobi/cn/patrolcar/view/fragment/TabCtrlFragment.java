@@ -24,10 +24,10 @@ import patrolcar.bobi.cn.patrolcar.view.base.BaseFragment;
  */
 
 public class TabCtrlFragment extends BaseFragment implements View.OnTouchListener {
-    private static final String TAG = "TabCtrlFragment";
-    private static final String CONN_NO = "未连接";
-    private static final String CONN_DIS = "已断开";
-    private static final String CONN_OK = "已连接";
+    private static final String TAG              = "TabCtrlFragment";
+    private static final String CONN_NO          = "未连接";
+    private static final String CONN_DIS         = "已断开";
+    private static final String CONN_OK          = "已连接";
     private static final int MSG_CONN_STATUS     = 1010;
     private static final int DEFAULT_ACC         = 3;
     private static final int HZ_10               = 100;
@@ -50,6 +50,9 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
     private String mConnStatus;
     private boolean mIsBrake, mIsAuto;
     private int mPwrSwitch, mMotorSwitch, mBrakeSignal, mDriveMotor, mAcc, mTurnTime, mTurnVelocity;
+    // 速度挡位
+    private int mVelocityLevel[] = new int[]{0, 15, 22, 30};
+    private int mDangWei = 0;
 
     public static TabCtrlFragment newInstance() {
         return new TabCtrlFragment();
@@ -96,7 +99,6 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
         }
     }
 
-
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
@@ -123,78 +125,16 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
                     mHandler.sendEmptyMessageDelayed(MSG_CONN_STATUS, HZ_1);
                     break;
                 case MSG_UP:
-                    if (!mIsAuto) {
-                        if (!mIsBrake) {
-                            if (mDriveMotor < 0) {
-                                clearZeroByMT(true);
-                            } else {
-                                clearZeroByMT(false);
-                            }
-                            cmdMotorCtrl();
-                            mDriveMotor += mAcc;
-                            if (mDriveMotor >= 100) {
-                                mDriveMotor = 100;
-                            } else if (mDriveMotor <= 15) {
-                                mDriveMotor = 15;
-                            }
-                            mHandler.sendEmptyMessageDelayed(MSG_UP, HZ_10);
-                        } else {
-                            looseningBrakePrompt();
-                        }
-                    } else {
-                        modeSelectPrompt();
-                    }
+                    ctrlDrive(MSG_UP);
                     break;
                 case MSG_DOWN:
-                    if (!mIsAuto) {
-                        if (!mIsBrake) {
-                            if (mDriveMotor > 0) {
-                                clearZeroByMT(true);
-                            } else {
-                                clearZeroByMT(false);
-                            }
-                            cmdMotorCtrl();
-                            mDriveMotor -= mAcc;
-                            if (mDriveMotor <= -100) {
-                                mDriveMotor = -100;
-                            } else if (mDriveMotor >= -15) {
-                                mDriveMotor = -15;
-                            }
-                            mHandler.sendEmptyMessageDelayed(MSG_DOWN, HZ_10);
-                        } else {
-                            looseningBrakePrompt();
-                        }
-                    } else {
-                        modeSelectPrompt();
-                    }
+                    ctrlDrive(MSG_DOWN);
                     break;
                 case MSG_LEFT:
-                    if (!mIsAuto) {
-                        if (!mIsBrake) {
-                            mTurnTime = 20;
-                            mTurnVelocity = -20;
-                            cmdMotorCtrl();
-                            mHandler.sendEmptyMessageDelayed(MSG_LEFT, HZ_10);
-                        } else {
-                            looseningBrakePrompt();
-                        }
-                    } else {
-                        modeSelectPrompt();
-                    }
+                    ctrlReturn(MSG_LEFT);
                     break;
                 case MSG_RIGHT:
-                    if (!mIsAuto) {
-                        if (!mIsBrake) {
-                            mTurnTime = 20;
-                            mTurnVelocity = 20;
-                            cmdMotorCtrl();
-                            mHandler.sendEmptyMessageDelayed(MSG_RIGHT, HZ_10);
-                        } else {
-                            looseningBrakePrompt();
-                        }
-                    } else {
-                        modeSelectPrompt();
-                    }
+                    ctrlReturn(MSG_RIGHT);
                     break;
                 case MSG_LOOSEN_DRIVE:
                     clearZeroByMT(false);
@@ -204,6 +144,63 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
             }
         }
     };
+
+    /** 驱动（前后）控制 */
+    private void ctrlDrive(int msg) {
+        if (!mIsAuto) {
+            if (!mIsBrake) {
+                if (msg == MSG_UP) {
+                    mDangWei++;
+                } else if (msg == MSG_DOWN) {
+                    mDangWei--;
+                }
+                if (mDangWei > (mVelocityLevel.length - 1)) {
+                    mDangWei = (mVelocityLevel.length - 1);
+                }
+                if (mDangWei < -(mVelocityLevel.length - 1)) {
+                    mDangWei = -(mVelocityLevel.length - 1);
+                }
+                if (mDangWei < 0) {
+                    mDriveMotor = -mVelocityLevel[-mDangWei];
+                } else {
+                    mDriveMotor = mVelocityLevel[mDangWei];
+                }
+                if (msg == MSG_UP) {
+                    mHandler.sendEmptyMessageDelayed(MSG_UP, HZ_10);
+                } else if (msg == MSG_DOWN) {
+                    mHandler.sendEmptyMessageDelayed(MSG_DOWN, HZ_10);
+                }
+            } else {
+                looseningBrakePrompt();
+            }
+        } else {
+            modeSelectPrompt();
+        }
+    }
+
+    /** 转向（左右）控制 */
+    private void ctrlReturn(int msg) {
+        if (!mIsAuto) {
+            if (!mIsBrake) {
+                mTurnTime = 10;
+                if (msg == MSG_LEFT) {
+                    mTurnVelocity = -20;
+                } else if (msg == MSG_RIGHT) {
+                    mTurnVelocity = 20;
+                }
+                cmdMotorCtrl();
+                if (msg == MSG_LEFT) {
+                    mHandler.sendEmptyMessageDelayed(MSG_LEFT, HZ_10);
+                } else if (msg == MSG_RIGHT) {
+                    mHandler.sendEmptyMessageDelayed(MSG_RIGHT, HZ_10);
+                }
+            } else {
+                looseningBrakePrompt();
+            }
+        } else {
+            modeSelectPrompt();
+        }
+    }
 
     @OnClick({R.id.tv_clear_gps, R.id.tv_conn_status, R.id.tv_set_acc, R.id.btn_ctrl_stop, R.id.rl_ctrl_up, R.id.rl_ctrl_down, R.id.rl_ctrl_left, R.id.rl_ctrl_right, R.id.tv_dev_on, R.id.tv_dev_off, R.id.tv_brake_on, R.id.tv_brake_off, R.id.tv_motor_on, R.id.tv_motor_off, R.id.tv_robot_ctrl, R.id.tv_auto_cruise})
     public void onViewClicked(View view) {
@@ -372,6 +369,7 @@ public class TabCtrlFragment extends BaseFragment implements View.OnTouchListene
     private void clearZeroByMT(boolean isClearDriveMotor) {
         if (isClearDriveMotor) {
             mDriveMotor = 0;
+            mDangWei = 0;
         }
         mPwrSwitch = 0;
         mMotorSwitch = 0;
